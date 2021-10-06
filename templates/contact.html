@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Contact
+{% endblock %}
+
+{% block main %}
+    <div class="block">
+        <h1 class="title">Contact</h1>
+        {% with messages = get_flashed_messages(category_filter=["success"]) %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="success" role="alert">
+                    {{message}}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% with messages = get_flashed_messages(category_filter=["error"]) %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error" role="alert">
+                    {{message}}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form id="contact-form" action="/contact" method="post">
+            <select class="form-item" name="subject" required autofocus>
+                <option selected disable>Request...</option>
+                {% for request in requests %}
+                <option>{{ requests[loop.index - 1] }}</option>
+                {% endfor %}
+            </select>
+            <textarea class="form-item" name="message" rows="10" cols="10" placeholder="Enter message..." required></textarea>
+            <button>Send</button>
+        </form>
+    </div>
+{% endblock %}

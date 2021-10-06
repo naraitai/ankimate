@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html lang="en-uk">
+    <head>
+        <title>Ankimate</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="../static/styles.css"/>
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <script src="../static/scripts.js"></script>
+    </head>
+    <body>
+        <div class="grid-container">
+            <header id="header">
+                <a href="/"><img id="logo" src="../static/ankimate.svg"/></a>
+            </header>
+            <nav id="navbar">
+                <a class="nav-link" href="/build">Build</a>
+                <a class="nav-link" href="/about">About</a>
+                <a class="nav-link" href="/contact">Contact</a>
+            </nav>
+            <main id="main">
+                {% block main %}{% endblock %}
+            </main>
+            <footer id="footer" class="grid-item">
+                V1.1
+            </footer>
+        </div>
+    </body>
+</html>
+

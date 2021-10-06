@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Build
+{% endblock %}
+
+{% block main %}
+    <div class="block">
+        <h1 class="title">Build</h1>
+        <div class="container">
+            <form id="input" name="data-form" method="post" autofocus>
+                <div class="input-item">
+                    <h3>Step 1 - Select data</h3>
+                    <input id="file_input" name="file" type="file" value="file" required/>
+                </div>
+                
+                <div class="input-item">
+                    <h3>Step 2 - Select language</h3>
+                    <fieldset name="lang">
+                        <label for="jp">JP</label>
+                        <input type="radio" name="lang" value="jp" required>
+                        <label for="cn">CN</label>
+                        <input type="radio" name="lang" value="cn" required>
+                    </fieldset>
+                </div>
+                
+                <div class="input-item">
+                    <h3>Step 3 - Select translation</h3>
+                    <select class="form-item" name="trans">
+                        {% for option in translation %}
+                        <option value="{{ translation[loop.index - 1].lower() }}">{{ translation[loop.index - 1].capitalize() }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="input-item">
+                    <h3>Step 4 - Select output</h3>
+                    <formfield id="output-option" name="out-opt">
+                        <label for="front">Front</label>
+                        <select id="front" class="form-item" name="front">
+                            {% for d in data %}
+                                {% if d == "sentence" %}
+                                    <option value="{{ data[loop.index - 1] }}" selected>{{ data[loop.index - 1].capitalize() }}</option>
+                                {% else %}
+                                    <option value="{{ data[loop.index - 1] }}">{{ data[loop.index - 1].capitalize() }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select><br>
+                        <label for="back">Back</label>
+                        <select id="back" class="form-item" name="back">
+                            {% for d in data %}
+                                {% if d == "transcription" %}
+                                    <option value="{{ data[loop.index - 1] }}" selected>{{data[loop.index - 1].capitalize() }}</option>
+                                {% else %}
+                                    <option value="{{ data[loop.index - 1] }}">{{ data[loop.index - 1].capitalize() }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select><br>
+                        <label for="extra-1">Extra</label>
+                        <select id="extra-1" class="form-item" name="extra-1">
+                            <option value="none"></option>
+                            {% for d in data %}
+                                <option value="{{ data[loop.index - 1] }}">{{ data[loop.index - 1].capitalize() }}</option>
+                            {% endfor %}
+                        </select>
+                    </formfield>
+                </div>
+                <button id="submit-btn">
+                    Submit<span id="progress" class="fetching" hidden></span>
+                </button>
+            </form>
+            <div id="results">
+                <form id="output">
+                    <table id="results-table">
+                        <thead>
+                            <tr>
+                                <th><h3 class="out-col">Word</h3></th>
+                                <th><h3 class="out-col">Sentence</h3></th>
+                                <th><h3 id="trans"></h3></th>
+                                <th><button id="reload-btn">Reload</button></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated with Ajax response -->
+                        </tbody>
+                    </table>
+                </form>
+                <form id="download" action="/download" method="post">
+                    <button>Download</button>
+                </form>
+            </div>
+        </div>
+    </div>    
+{% endblock %}

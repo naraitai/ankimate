@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    About
+{% endblock %}
+
+{% block main %}
+    <div class="block">
+        <h1 class="title">About</h1>
+        <section class="text-content">
+            <h2 class="collapsible">The Project</h2>
+            <div hidden>
+                <p>
+                    Anki is an incredibly useful tool for acquiring a range of knowledge, including foreign languages.
+                    The problem is it takes a lot of work to create good quality and personalised study cards.
+                </p><br>
+                <p>
+                    Ankimate is intended to help reduce this workload for students of Japanese and Mandarin Chinese.
+                </p><br>
+                <p>
+                    It's operation is simple. Upload a file containing vocabulary you intend to learn. Set some basic
+                    settings. Review the returned data. Re-search the database if desired. Download data and 
+                    open it in Anki
+                </p><br>
+                <p>
+                    Ankimate is under active development and features will be added over time. You can review and 
+                    track releases below or suggest improvements <a href="/contact">here</a>.
+                </p><br>
+            </div>
+        </section>
+        <section class="text-content">
+            <h2 class="collapsible">Releases</h2>
+            <div hidden>
+                <table>
+                    <tr>
+                        <th>Release date</th>
+                        <th>Version</th>
+                        <th>Additions</th>
+                    </tr>
+                    <tr>
+                        <td>/21</td>
+                        <td>v.1</td>
+                        <td>
+                            <ul>
+                                <li>Upload vocabulary file.</li>
+                                <li>Set language (Japanese or Mandarin Chinese).</li>
+                                <li>Set translation language (None, English).</li>
+                                <li>Set front and back values for basic Anki card creation.</li>
+                                <li>Reject sentences and get alternative back (if available)</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+        <section class="text-content">
+            <h2 class="collapsible">Acknowledgments</h2>
+            <div hidden>
+                <p>This project owes a debt to a number of other open source projects. With thanks to:</p>
+                <ul>
+                    <li>
+                        <a href="https://tatoeba.org/en/">Tatoeba:</a> A searchable database of sentences
+                        and translations in a number of languages. 
+                        The data is available under the 
+                        <a href="https://creativecommons.org/licenses/by/2.0/">CC-BY(2.0)</a> license.
+                    </li>
+                    <li>
+                        <a href="https://www.edrdg.org/jmdict/j_jmdict.html">JMDict:</a> A Japanese dictionary project.
+                        The data is available under the 
+                        <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA(4.0)</a> license
+                    </li>
+                    <li>
+                        <a href="http://corpus.leeds.ac.uk/list.html">Leeds Frequency Corpora:</a> A frequency list
+                        based on internet corpora. The data is available under the 
+                        <a href="https://creativecommons.org/licenses/by/2.5/">CC BY(2.5)</a> license.
+                    </li>
+                    <li>
+                        <a href="https://www.dampfkraft.com/nlp/how-to-tokenize-japanese.html">Fugashi:</a>
+                        A Japanese tokenizer for Python to aid natural language processing (NLP).
+                    </li>
+                    <li>
+                        <a href="https://pypi.org/project/jieba/">Jieba:</a> A Mandarin Chinese tokenizer for Python
+                        to aid natural language processing (NLP).
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </div>
+    
+{% endblock %}
