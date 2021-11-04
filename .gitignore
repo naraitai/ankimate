@@ -1,3 +1,4 @@
 __pycache__
 .env
-static/favicon.svg
+static/styles.scss
+static/styles.css.map

@@ -5,90 +5,149 @@
 {% endblock %}
 
 {% block main %}
-    <div class="block">
-        <h1 class="title">Build</h1>
-        <div class="container">
-            <form id="input" name="data-form" method="post" autofocus>
-                <div class="input-item">
-                    <h3>Step 1 - Select data</h3>
-                    <input id="file_input" name="file" type="file" value="file" required/>
+    <div class="build-container">
+        <h2 hidden>Build</h2>
+        <!--Form for user to upload file and search for sentences-->
+        <div class="form-container">
+            <h3 class="form-header">Upload</h3>
+            <form id="input">
+                <!--File upload-->
+                <div class="form-element-container">
+                    <h4 class="form-element-title">Vocabulary List</h3>
+                    <div class="form-element">
+                        <input id="file-input" name="file" type="file" value="file" required/>
+                    </div>
                 </div>
-                
-                <div class="input-item">
-                    <h3>Step 2 - Select language</h3>
-                    <fieldset name="lang">
-                        <label for="jp">JP</label>
-                        <input type="radio" name="lang" value="jp" required>
-                        <label for="cn">CN</label>
-                        <input type="radio" name="lang" value="cn" required>
-                    </fieldset>
+                <!--Language selection-->
+                <div class="form-element-container">
+                    <h4 class="form-element-title">Language</h3>
+                    <div class="form-element">
+                        <fieldset name="lang">
+                            <div class="radio-container">
+                                <label for="jp">
+                                    <img src="../static/radioJP.svg">
+                                    <input class="custom-radio" type="radio" name="lang" value="jp" required>    
+                                </label>
+                            </div>
+                            <div class="radio-container">
+                                <label for="cn">
+                                    <img src="../static/radioCN.svg">
+                                    <input class="custom-radio" type="radio" name="lang" value="cn" required>
+                                </label>
+                            </div>
+                        </fieldset>
+                    </div>
                 </div>
-                
-                <div class="input-item">
-                    <h3>Step 3 - Select translation</h3>
-                    <select class="form-item" name="trans">
-                        {% for option in translation %}
-                        <option value="{{ translation[loop.index - 1].lower() }}">{{ translation[loop.index - 1].capitalize() }}</option>
-                        {% endfor %}
-                    </select>
+                <!--Toggle translation on or off-->
+                <div class="form-element-container">
+                    <h4 class="form-element-title">Translation</h3>
+                    <div class="form-element">
+                        <fieldset name="trans">
+                            <div class="radio-container">
+                                <label for="none">
+                                    <img src="../static/radioN.svg">
+                                    <input class="custom-radio" type="radio" name="trans" value="none" checked>
+                                </label>
+                            </div>
+                            <div class="radio-container">
+                                <label for="en">
+                                    <img src="../static/radioY.svg">
+                                    <input class="custom-radio" type="radio" name="trans" value="en">
+                                </label>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!--Submit form to upload file and search for sentences-->
+                    <div class="form-element">
+                        <button id="submit-btn">
+                            Submit
+                        </button>
+                    </div>
                 </div>
-
-                <div class="input-item">
-                    <h3>Step 4 - Select output</h3>
-                    <formfield id="output-option" name="out-opt">
-                        <label for="front">Front</label>
-                        <select id="front" class="form-item" name="front">
-                            {% for d in data %}
-                                {% if d == "sentence" %}
-                                    <option value="{{ data[loop.index - 1] }}" selected>{{ data[loop.index - 1].capitalize() }}</option>
-                                {% else %}
-                                    <option value="{{ data[loop.index - 1] }}">{{ data[loop.index - 1].capitalize() }}</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select><br>
-                        <label for="back">Back</label>
-                        <select id="back" class="form-item" name="back">
-                            {% for d in data %}
-                                {% if d == "transcription" %}
-                                    <option value="{{ data[loop.index - 1] }}" selected>{{data[loop.index - 1].capitalize() }}</option>
-                                {% else %}
-                                    <option value="{{ data[loop.index - 1] }}">{{ data[loop.index - 1].capitalize() }}</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select><br>
-                        <label for="extra-1">Extra</label>
-                        <select id="extra-1" class="form-item" name="extra-1">
-                            <option value="none"></option>
-                            {% for d in data %}
-                                <option value="{{ data[loop.index - 1] }}">{{ data[loop.index - 1].capitalize() }}</option>
-                            {% endfor %}
-                        </select>
-                    </formfield>
-                </div>
-                <button id="submit-btn">
-                    Submit<span id="progress" class="fetching" hidden></span>
-                </button>
             </form>
-            <div id="results">
-                <form id="output">
-                    <table id="results-table">
-                        <thead>
-                            <tr>
-                                <th><h3 class="out-col">Word</h3></th>
-                                <th><h3 class="out-col">Sentence</h3></th>
-                                <th><h3 id="trans"></h3></th>
-                                <th><button id="reload-btn">Reload</button></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Populated with Ajax response -->
-                        </tbody>
-                    </table>
-                </form>
-                <form id="download" action="/download" method="post">
-                    <button>Download</button>
-                </form>
-            </div>
         </div>
-    </div>    
+        <!--Display results when returned-->
+        <div class="table-container">
+            <h3 class="form-header">Review</h3>
+            <!--Basic placholder-->
+            <div id="placeholder">
+                <!--Give user feedback that database is being searched-->
+                <p id="placeholder-text">Sentences will appear here</p>
+                <span id="progress" class="fetching" hidden></span>
+            </div>
+            <!--Not displayed until AJAX response-->
+            <form id="output">
+                <table id="results-table">
+                    <thead>
+                        <tr>
+                            <th><h3 class="out-col">Word</h3></th>
+                            <th><h3 class="out-col">Sentence</h3></th>
+                            <th><h3 id="trans"></h3></th>
+                            <th><button id="reload-btn">Reload</button></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <!--Populated with Ajax response-->
+                    </tbody>
+                </table>
+            </form>
+        </div>
+        <!--Form for user to select the data structure of download file-->
+        <div class="form-container">
+            <h3 class="form-header">Download</h3>
+            <form id="download" action="/download" method="post">
+                <div class="form-element-container">
+                    <div class="form-element">
+                        <formfield name="out-opt">
+                            <!--Front field for Anki cards-->
+                            <div class="select-container">
+                                <label for="front"><span>Front</span>
+                                    <select id="front" name="front">
+                                        {% for d in data %}
+                                            {% if d == "sentence" %}
+                                                <option value="{{ data[loop.index - 1] }}" selected>{{ data[loop.index - 1].capitalize() }}</option>
+                                            {% else %}
+                                                <option value="{{ data[loop.index - 1] }}">{{ data[loop.index - 1].capitalize() }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </label>
+                            </div>
+                            <!--Bak field for Anki cards-->
+                            <div class="select-container">
+                                <label for="back"><span>Back</span>
+                                    <select id="back" name="back">
+                                        {% for d in data %}
+                                            {% if d == "transcription" %}
+                                                <option value="{{ data[loop.index - 1] }}" selected>{{data[loop.index - 1].capitalize() }}</option>
+                                            {% else %}
+                                                <option value="{{ data[loop.index - 1] }}">{{ data[loop.index - 1].capitalize() }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </label>
+                            </div>
+                            <!--Optional extra field for Anki cards-->
+                            <div class="select-container">
+                                <label for="extra-1"><span>Extra</span>
+                                    <select id="extra-1" name="extra-1">
+                                        <option value="none"></option>
+                                        {% for d in data %}
+                                            <option value="{{ data[loop.index - 1] }}">{{ data[loop.index - 1].capitalize() }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </label>
+                            </div>
+                        </formfield>
+                    </div>
+                    <!--Submit to download file-->
+                    <div class="form-element">
+                        <button id="submit-btn">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock %}

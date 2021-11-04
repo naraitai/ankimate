@@ -4,9 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var loc = location.href;
     for (var i = 0; i < navs.length; i++) {
         if (navs[i] == loc) {
-            //NEEDED TO ADD TO BOTH?
+            //Add active class to apply styling
             navs[i].classList.add('active');
-            navs[i].parentElement.classList.add('active');
         }
     }
 });
@@ -21,7 +20,10 @@ if (window.location.pathname == "/build") {
             event.preventDefault();
             var formData = new FormData(form);
             //Set "loading" styling
+            document.getElementById('placeholder-text').innerHTML = 'Fetching sentences';
+            document.getElementById('placeholder').removeAttribute('hidden');
             document.getElementById('progress').removeAttribute('hidden');
+    
             //AJAX request
             dataRequest(formData);
         });
@@ -45,6 +47,7 @@ function dataRequest(formData) {
         if (this.readyState == 4 && this.status == 200) {
             const data = JSON.parse(request.responseText);
             document.getElementById('progress').setAttribute('hidden', true);
+            document.getElementById('placeholder').setAttribute('hidden', true);
             showResults(data);
         }
     };
@@ -55,13 +58,17 @@ function dataRequest(formData) {
 //Display AJAX response data in output table
 function showResults(data) {
     //Get table
+
+    //const resultsHead = document.querySelector('#results-table > thead');
+    var form = document.getElementById('output');
+    form.style.display = 'flex';
     const resultsBody = document.querySelector('#results-table > tbody');
     //Clear table
     while (resultsBody.firstChild) {
         resultsBody.removeChild(resultsBody.firstChild);
     }
     //Iterate across data and create output table
-    for (var key in data) {      
+    for (var key in data) {    
         //Set row
         const tr = document.createElement('tr');
         //Add "word" column
@@ -71,11 +78,11 @@ function showResults(data) {
 
         //Add "sentence" column
         const sentence = document.createElement('td'); 
-        sentence.textContent = data[key][0];
+        sentence.textContent = data[key]['sentence'];
         tr.append(sentence);
 
-        //Add "translation" columnn or "placeholder" column (NAIVE IMPLEMENTATION / PLACEHOLDER REQUIRED?)
-        length = data[key].length;
+        //Add "translation" columnn or "placeholder" column
+        length = Object.keys(data[key]).length;
         if (length == 3) {
             //Reveal "translation header"
             const head = document.getElementById('trans');
@@ -83,7 +90,7 @@ function showResults(data) {
             head.textContent = 'Translation';           
             //Add "translation" column
             const translation = document.createElement('td');
-            translation.textContent = data[key][2];
+            translation.textContent = data[key]['translation'];
             tr.append(translation);
         }
         else {
@@ -91,11 +98,6 @@ function showResults(data) {
             const head = document.getElementById('trans');
             head.classList.remove('out-col');
             head.textContent = '';
-
-            //Add "placeholder" column to push radio buttons right (CANT JUST GENERATE IF NEEDED)
-            const placeholder = document.createElement('td');
-            placeholder.classList.add('placeholder');
-            tr.append(placeholder);
         }
         
         //Add "reload" checkboxes
@@ -129,6 +131,7 @@ function reloadRequest(reloadData) {
 
 //Reload output table
 function reloadResults(data) {
+    console.log(data);
     //Iterate across response data
     for (var key in data) {
         //Get table
@@ -138,9 +141,9 @@ function reloadResults(data) {
             row = resultsBody.rows[i];
             if (row.cells[0].innerText == key) {
                 //Reload example sentence
-                row.cells[1].innerText = data[key][0];
+                row.cells[1].innerText = data[key]['sentence'];
                 //Check if translation and change
-                trans = data[key][2];
+                trans = data[key]['translation'];
                 if ( trans != undefined) {
                     row.cells[2].innerText = trans;
                 }
@@ -155,19 +158,27 @@ if (window.location.pathname == "/about") {
         //Listen for click on collapsible elements
         var collapsible = document.getElementsByClassName('collapsible');
         for (var i = 0; i < collapsible.length; i++) {
-            collapsible[i].addEventListener('click', collapse);
+            collapsible[i].addEventListener('click', collapse); 
         }
     });
 }
 
 //Make elements collapsible
 function collapse() {
-    var block = this.nextElementSibling;
-    var hidden = block.hasAttribute('hidden');
-    if (hidden == true) {
-        block.removeAttribute('hidden');
+    var block = this.children[1];
+    var header = this.children[0];
+    console.log(header);
+    var headerIcon = header.children[1];
+    var headerTitle = header.children[0];
+
+    if (block.style.maxHeight) {
+        block.style.maxHeight = null;
+        header.classList.remove('selected');
+        headerIcon.innerText = '\u002B';
     }
     else {
-        block.setAttribute('hidden', true);
+        block.style.maxHeight = block.scrollHeight + 'px';
+        header.classList.add('selected');
+        headerIcon.innerText = '\u2212';
     }
 }

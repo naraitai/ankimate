@@ -1,0 +1,10 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="700" height="85" preserveAspectRation="xMidyMid meet" version="1.1"  xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="Gradient1" x1="0%" x2="0%" y1="100%" y2="0%">
+            <stop offset="0%" stop-color="#8BC7F0"/>
+            <stop offset="100%" stop-color="#0084DD"/>
+        </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="16" height="16" rx="5" ry="5" fill="#1A1D27"/>
+</svg>
