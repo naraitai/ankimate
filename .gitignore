@@ -1,2 +1,4 @@
 __pycache__
 .env
+static/styles.scss
+static/styles.css.map
