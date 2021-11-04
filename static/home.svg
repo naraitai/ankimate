@@ -6,5 +6,5 @@
             <stop offset="100%" stop-color="#0084DD"/>
         </linearGradient>
     </defs>
-    <text x="5" y="80" font-size="100" font-family="Arial" font-variant="small-caps" font-weight="800" fill="url(#Gradient1)" stroke="white" stroke-width="2px">Ankimate</text>
+    <rect x="0" y="0" width="16" height="16" rx="5" ry="5" fill="#1A1D27"/>
 </svg>
