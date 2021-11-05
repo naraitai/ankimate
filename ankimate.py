@@ -1,7 +1,7 @@
 import os, csv, sqlite3, json, redis
 from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
-from flask import Flask, render_template, request, redirect, send_file, session, flash
+from flask import Flask, render_template, request, redirect, send_file, session, flash, abort
 from flask_session import Session
 from flask_mail import Mail, Message
 from smtplib import SMTPException
@@ -164,7 +164,7 @@ def process():
                         if settings["trans"] == "en":
                             selected[key] = {"sentence":"No sentences found.", "transcription":"No sentences found.", "translation":"No translation found."}
                         else:
-                            selected[key] = {"sentence":"No sentences found."}
+                            selected[key] = {"sentence":"No sentences found.", "transcription":"No sentences found."}
             
                 #Save data in session
                 session["sentences"] = sentences
