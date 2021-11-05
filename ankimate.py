@@ -242,7 +242,8 @@ def download():
                     continue
             else:
                 #Do not enter lines where no sentence found
-                if single[entry][field_val] == "No sentences found.":
+                not_found = ["No sentences found.", "No translation found."]
+                if single[entry][field_val] in not_found and (single[entry]["translation"] in not_found or single[entry]["sentence"] in not_found):
                     if count == len(download_struct) and field_val != "none":
                         file.write(f"\n")
                     continue
