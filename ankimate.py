@@ -165,7 +165,7 @@ def process():
                         if settings["trans"] == "en":
                             selected[key] = {"sentence":"No sentences found.", "transcription":"No sentences found.", "translation":"No translation found."}
                         else:
-                            selected[key] = {"sentence":"No sentences found."}
+                            selected[key] = {"sentence":"No sentences found.", "transcription":"No sentences found."}
             
                 #Save data in session
                 session["sentences"] = sentences
@@ -287,7 +287,6 @@ def contact():
         return render_template("contact.html", requests=requests)
         
     return redirect("/contact")
-
 
 #Scheduled cleanup of downloads directory
 def cleanup():
