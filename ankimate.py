@@ -214,8 +214,11 @@ def reload ():
 @app.route("/download", methods=["POST"])
 def download():
 
-    #Get user selected data structure
-    download_struct = request.form
+    #Get user selected data structure and store values as a list
+    download_struct = request.form.to_dict().values()
+    fields = []
+    for item in download_struct:
+        fields.append(item)
 
     #Get sentences from session and data output options
     single = session["selected"]
@@ -226,35 +229,15 @@ def download():
     
     #Iterate across selected sentences
     for entry in single:
-        count = 1
-        #Iterate across all user selected data fields (front, back...) (Future: Add function so users can add more card fields)
-        for field in download_struct:
-            field_val = download_struct[field]
+        #Iterate accross all form fields and add data to download file (tab separated)#
+        length = len(download_struct) - 1
+        count = 0
+        while count < length:
+            file.write(f"{single[entry][fields[count]]}\t")
+            count += 1
+        #Add final field and escape to new line.
+        file.write(f"{single[entry][fields[count]]}\n")
 
-            #Do not enter data for blank fields
-            if field_val == "none":
-                file.write("")
-                if count == len(download_struct):
-                    file.write("\n")
-                    continue
-                else:
-                    continue
-            else:
-                #Do not enter lines where no sentence found
-                if single[entry][field_val] == "No sentences found.":
-                    if count == len(download_struct) and field_val != "none":
-                        file.write(f"\n")
-                    continue
-                #Front added first
-                if field == "front":
-                    file.write(f"{single[entry][field_val]}")
-                #Last field added with newline break
-                elif count == len(download_struct) and field_val != "none":
-                    file.write(f"\t{single[entry][field_val]}\n")
-                #Middle field value
-                else:
-                    file.write(f"\t{single[entry][field_val]}")
-                count += 1
     file.close()
 
     return send_file(filename, as_attachment=True)
