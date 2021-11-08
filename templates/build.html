@@ -98,7 +98,7 @@
             <form id="download" action="/download" method="post">
                 <div class="form-element-container">
                     <div class="form-element">
-                        <formfield name="out-opt">
+                        <formfield id="fields" name="out-opt">
                             <!--Front field for Anki cards-->
                             <div class="select-container">
                                 <label for="front"><span>Front</span>
@@ -113,7 +113,7 @@
                                     </select>
                                 </label>
                             </div>
-                            <!--Bak field for Anki cards-->
+                            <!--Back field for Anki cards-->
                             <div class="select-container">
                                 <label for="back"><span>Back</span>
                                     <select id="back" name="back">
@@ -127,18 +127,12 @@
                                     </select>
                                 </label>
                             </div>
-                            <!--Optional extra field for Anki cards-->
-                            <div class="select-container">
-                                <label for="extra-1"><span>Extra</span>
-                                    <select id="extra-1" name="extra-1">
-                                        <option value="none"></option>
-                                        {% for d in data %}
-                                            <option value="{{ data[loop.index - 1] }}">{{ data[loop.index - 1].capitalize() }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </label>
-                            </div>
+                            <!--Optional extra fields for Anki cards added via JavaScript-->
                         </formfield>
+                    </div>
+                    <div class="plus-minus">
+                        <button id="add">+</button>
+                        <button id="remove">-</button>
                     </div>
                     <!--Submit to download file-->
                     <div class="form-element">

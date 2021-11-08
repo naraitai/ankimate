@@ -35,6 +35,30 @@ if (window.location.pathname == "/build") {
             var reloadData = new FormData(reload);
             reloadRequest(reloadData);
         }); 
+
+        //Listen for plus button click
+        var add = document.getElementById('add');
+        add.addEventListener('click', function(event) {
+            event.preventDefault();
+            var container = document.getElementById('fields');
+            var element = container.getElementsByTagName('div')[1]
+            var cln = element.cloneNode(true);
+            cln.getElementsByTagName('span')[0].innerHTML = 'Extra';
+            var name = container.children.length;
+            cln.getElementsByTagName('select')[0].setAttribute('name', name)
+            container.appendChild(cln);
+        });
+
+        //List for remove button click
+        var rmv = document.getElementById('remove');
+        rmv.addEventListener('click', function(event) {
+            event.preventDefault();
+            var container = document.getElementById('fields');
+            var element = container.lastChild;
+            if (container.children.length > 2) {
+                element.remove();
+            }
+        });
     });
 }
 

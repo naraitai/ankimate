@@ -31,6 +31,7 @@ p {
 }
 
 button {
+  min-width: 5vw;
   align-self: center;
   margin: 1em;
   border-radius: 0.5em;
@@ -603,6 +604,10 @@ html {
 }
 .select-container:hover span {
   color: #DFF0FB;
+}
+
+.plus-minus {
+  display: flex;
 }
 
 /* Contact Page */

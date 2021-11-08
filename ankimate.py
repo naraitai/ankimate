@@ -58,7 +58,7 @@ def build():
     #HTML data-form options (input language / translation & output options)
     languages = ["JP", "CMN"]
     translation = ["none", "english"]
-    data = ["sentence", "translation", "transcription"]
+    data = ["sentence", "translation", "transcription", "word"]
 
     return render_template("build.html", languages=languages, translation=translation, data=data)
 
@@ -219,6 +219,8 @@ def download():
     fields = []
     for item in download_struct:
         fields.append(item)
+    print(request.form)
+    print(download_struct)
 
     #Get sentences from session and data output options
     single = session["selected"]
@@ -233,10 +235,16 @@ def download():
         length = len(download_struct) - 1
         count = 0
         while count < length:
-            file.write(f"{single[entry][fields[count]]}\t")
+            if fields[count] == "word":
+                file.write(f"{entry}\t")
+            else:
+                file.write(f"{single[entry][fields[count]]}\t")
             count += 1
         #Add final field and escape to new line.
-        file.write(f"{single[entry][fields[count]]}\n")
+        if fields[count] == "word":
+                file.write(f"{entry}\n")
+        else:
+            file.write(f"{single[entry][fields[count]]}\n")
 
     file.close()
 
