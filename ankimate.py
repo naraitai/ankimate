@@ -237,8 +237,6 @@ def download():
     fields = []
     for item in download_struct:
         fields.append(item)
-    print(request.form)
-    print(download_struct)
 
     #Get sentences from session and data output options
     single = session["selected"]
