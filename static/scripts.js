@@ -118,17 +118,17 @@ function showResults(data) {
         //Add "translation" columnn or "placeholder" column
         length = Object.keys(data[key]).length;
         if (length == 3) {
-            //Reveal "translation header"
+            //Reveal translation header
             const head = document.getElementById('trans');
-            head.classList.add('results-header');
+            head.classList.add('result-header');
             head.textContent = 'Translation';           
-            //Add "translation" column
+            //Add translation column
             const translation = document.createElement('td');
             translation.textContent = data[key]['translation'];
             tr.append(translation);
         }
         else {
-            //Set empty "translation" header
+            //Set empty translation header
             const head = document.getElementById('trans');
             //head.classList.add('out-col');
             head.textContent = '';
