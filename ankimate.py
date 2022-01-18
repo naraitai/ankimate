@@ -51,24 +51,41 @@ def allowed_file(filename):
 def index():
     return render_template("index.html") 
 
+@app.route("/build_jp", methods=["GET"])
+def build_jp():
+    session["lang"] = "jp"
+
+    return redirect("/build")
+
+@app.route("/build_cn", methods=["GET"])
+def build_cn():
+    session["lang"] = "cn"
+    return redirect("/build")
+
 #Build simply renders page template
-@app.route("/build")
+@app.route("/build", methods=["GET", "POST"])
 def build():
 
     #HTML data-form options (input language / translation & output options)
     languages = ["JP", "CMN"]
     translation = ["none", "english"]
     data = ["sentence", "translation", "transcription"]
+    
+    if session["lang"] == "jp":
+        lang = "日本語"
+    elif session["lang"] == "cn":
+        lang = "中文"
 
-    return render_template("build.html", languages=languages, translation=translation, data=data)
+    return render_template("build.html", lang=lang, languages=languages, translation=translation, data=data)
 
 #Process input data using selected options
-@app.route("/process", methods=["POST"])
-def process():
+@app.route("/fetch", methods=["POST"])
+def fetch():
 
     #Store user selected settings in session
     settings = request.form
     session["settings"] = settings
+
     #Set maxmium number of matched sentences to return (Future: Allow users to set this value)
     match_no = 5
     
@@ -99,7 +116,7 @@ def process():
                 db = con.cursor()
                 
                 #Get language option selected to complete query
-                lang = settings["lang"].upper()
+                lang = session["lang"].upper()
                 
                 #Iterate accross user vocabulary
                 for row in reader:
@@ -115,7 +132,7 @@ def process():
                     #Search for sentences with translations and matched to grade
                     elif settings["trans"] == "en":
                         db.execute(f"SELECT sentences{lang}.sentence, sentences{lang}.transcription, sentencesEN.sentence AS translation \
-                                FROM trans{lang}_EN JOIN sentences{lang} ON trans{lang}_EN.{settings['lang']}_id = sentences{lang}.id \
+                                FROM trans{lang}_EN JOIN sentences{lang} ON trans{lang}_EN.{session['lang']}_id = sentences{lang}.id \
                                 JOIN sentencesEN ON trans{lang}_EN.en_id = sentencesEN.id \
                                 WHERE sentences{lang}.tokens LIKE ? AND sentences{lang}.grade <= (SELECT grade FROM level{lang} \
                                 WHERE dict_id = (SELECT id FROM dictionary{lang} WHERE word = ? OR transcription = ?)) \
@@ -124,7 +141,7 @@ def process():
                         #Search for sententences with translations without matching to grade (wider search)
                         if not results:
                             db.execute(f"SELECT sentences{lang}.sentence, sentences{lang}.transcription, sentencesEN.sentence AS translation \
-                                FROM trans{lang}_EN JOIN sentences{lang} ON trans{lang}_EN.{settings['lang']}_id = sentences{lang}.id \
+                                FROM trans{lang}_EN JOIN sentences{lang} ON trans{lang}_EN.{session['lang']}_id = sentences{lang}.id \
                                 JOIN sentencesEN ON trans{lang}_EN.en_id = sentencesEN.id \
                                 WHERE sentences{lang}.tokens LIKE ? \
                                 ORDER BY grade, frequency LIMIT 5;", ("%[" + word + "]%",))

@@ -16,12 +16,15 @@ if (window.location.pathname == "/build") {
 
         //Listen for data-input form submission
         var form = document.getElementById('input');
+        
         form.addEventListener('submit', function(event){
             event.preventDefault();
+
             var formData = new FormData(form);
+            
             //Set "loading" styling
             document.getElementById('placeholder-text').innerHTML = 'Fetching sentences';
-            document.getElementById('placeholder').removeAttribute('hidden');
+            document.getElementById('placeholder-text').removeAttribute('hidden');
             document.getElementById('progress').removeAttribute('hidden');
     
             //AJAX request
@@ -35,19 +38,50 @@ if (window.location.pathname == "/build") {
             var reloadData = new FormData(reload);
             reloadRequest(reloadData);
         }); 
+
+        const actualBtn = document.getElementById('actual-btn');
+        const fileChosen = document.getElementById('file-text');
+
+        actualBtn.addEventListener('change', function(){
+            fileChosen.textContent = this.files[0].name
+        });
+
+        //Listen for plus button click
+        var add = document.getElementById('add');
+        add.addEventListener('click', function(event) {
+            event.preventDefault();
+            var container = document.getElementById('fields');
+            var element = container.getElementsByTagName('div')[1]
+            var cln = element.cloneNode(true);
+            cln.getElementsByClassName('tile-title')[0].innerHTML = 'Extra';
+            var name = container.children.length;
+            cln.getElementsByTagName('select')[0].setAttribute('name', name)
+            container.appendChild(cln);
+        });
+
+        //Listen for remove button click
+        var rmv = document.getElementById('remove');
+        rmv.addEventListener('click', function(event) {
+            event.preventDefault();
+            var container = document.getElementById('fields');
+            var element = container.lastChild;
+            if (container.children.length > 2) {
+                element.remove();
+            }
+        });
     });
 }
 
 //Data-input form AJAX request
 function dataRequest(formData) {
     var request = new XMLHttpRequest();
-    request.open('POST', '/process', true);
+    request.open('POST', '/fetch', true);
 
     request.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             const data = JSON.parse(request.responseText);
             document.getElementById('progress').setAttribute('hidden', true);
-            document.getElementById('placeholder').setAttribute('hidden', true);
+            document.getElementById('placeholder-text').setAttribute('hidden', true);
             showResults(data);
         }
     };
@@ -86,7 +120,7 @@ function showResults(data) {
         if (length == 3) {
             //Reveal "translation header"
             const head = document.getElementById('trans');
-            head.classList.add('out-col');
+            head.classList.add('results-header');
             head.textContent = 'Translation';           
             //Add "translation" column
             const translation = document.createElement('td');
@@ -96,8 +130,13 @@ function showResults(data) {
         else {
             //Set empty "translation" header
             const head = document.getElementById('trans');
-            head.classList.remove('out-col');
+            //head.classList.add('out-col');
             head.textContent = '';
+            
+            const translation = document.createElement('td');
+            translation.classList.add('empty-td');
+            translation.textContent = '';
+            tr.append(translation);
         }
         
         //Add "reload" checkboxes

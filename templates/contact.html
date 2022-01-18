@@ -5,41 +5,39 @@
 {% endblock %}
 
 {% block main %}
-    <div class="contact">
-        <h1 class="title" hidden>Contact</h1>
-        <!--Logic to display sucess or failer message (failure not yet implemented)-->
-        {% with messages = get_flashed_messages(category_filter=["success"]) %}
-        {% if messages %}
-            {% for message in messages %}
-                <div class="success" role="alert">
-                    {{message}}
-                </div>
-            {% endfor %}
-        {% endif %}
-        {% endwith %}
+    <h1 class="title">Contact</h1>
+    <!--Logic to display sucess or failer message (failure not yet implemented)-->
+    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="success" role="alert">
+                {{message}}
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
 
-        {% with messages = get_flashed_messages(category_filter=["error"]) %}
-        {% if messages %}
-            {% for message in messages %}
-                <div class="error" role="alert">
-                    {{message}}
-                </div>
+    {% with messages = get_flashed_messages(category_filter=["error"]) %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="error" role="alert">
+                {{message}}
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+    
+    <form id="contact-form" class="flex-col" action="/contact" method="post">
+        <!--Email subject-->
+        <select class="contact-item" name="subject" required autofocus>
+            <option selected disable>Request...</option>
+            {% for request in requests %}
+            <option>{{ requests[loop.index - 1] }}</option>
             {% endfor %}
-        {% endif %}
-        {% endwith %}
-        
-        <form id="contact-form" action="/contact" method="post">
-            <!--Email subject-->
-            <select class="contact-item" name="subject" required autofocus>
-                <option selected disable>Request...</option>
-                {% for request in requests %}
-                <option>{{ requests[loop.index - 1] }}</option>
-                {% endfor %}
-            </select>
-            <!--Email message-->
-            <textarea class="contact-item" name="message" rows="10" cols="10" placeholder="Enter message..." required></textarea>
-            <!--Submit to send email-->
-            <button>Send</button>
-        </form>
-    </div>
+        </select>
+        <!--Email message-->
+        <textarea class="contact-item" name="message" rows="10" cols="10" placeholder="Enter message..." required></textarea>
+        <!--Submit to send email-->
+        <button class="std-btn">Send</button>
+    </form>
 {% endblock %}
