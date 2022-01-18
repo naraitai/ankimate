@@ -11,6 +11,42 @@ $lt-blue: #DFF0FB;
 //Font
 $df-font: Arial;
 
+/* Font variables */
+
+/* Mobile */
+:root {
+    --fs-lg: 1.5rem;
+    --fs-med: 1.25rem;
+    --fs-stand: 1rem;
+}
+
+/* Tablet */
+@media only screen and (min-width: 481px) {
+    :root {
+        --fs-lg: 2.25rem;
+        --fs-med: 1.75rem;
+        --fs-stand: 1.25rem;
+    }
+}
+
+/* Medium screens */
+@media only screen and (min-width: 769px) {
+    :root {
+        --fs-lg: 2.5rem;
+        --fs-med: 2rem;
+        --fs-stand: 1rem;
+    }
+}
+
+/* Desktop */
+@media only screen and (min-width: 1025px) {
+    :root {
+        --fs-lg: 2.75rem;
+        --fs-med: 2.25rem;
+        --fs-stand: 1.25rem;
+    }
+}
+
 /* Global styling */
 * {
     box-sizing: border-box;
@@ -18,43 +54,38 @@ $df-font: Arial;
     border: 0;
     padding: 0;
     font-family: $df-font;
-    color: $nr-black;
 }
 
-h1 {
+h1, h2, h3, h4 {
     font-variant: small-caps;
     font-weight: bold;
-    font-size: 2rem;
-    color: $dk-blue;
+    color: $lt-blue;
 }
-h2, h3, h4 {
-    font-variant: small-caps;
-    font-weight: bold;
-    font-size: 1.5rem;
+
+/* Heading specific styling */
+h1 {
+    font-size: var(--fs-lg);
+}
+h2 {
+    font-size: var(--fs-med);
 }
 h3 {
     color: $lt-blue;
 }
 
-p {
+p, span {
     margin-bottom: 1em;
-    font-size: 1rem;
+    font-size: var(--fs-stand);
 }
 
-button {
-    align-self: center;
-    margin: 1em;
-    border-radius: 0.5em;
-    padding: 0.5em;
-    background-color: $nr-black;
-    cursor: pointer;
-    font-variant: small-caps;
-    font-size: 1rem;
+a {
     color: $lt-blue;
+    text-decoration: none;
 }
-button:hover {
-    background-color: $lt-blue;
-    color: $nr-black;
+
+/* Set scroll to always on (Stops bar popping in on About page when expanding collapsible elements) */
+html {
+    overflow-y: scroll;
 }
 
 /* Structure */
@@ -62,464 +93,430 @@ html, body {
     width: 100%;
     min-height: 100vh;
 }
-/* Set scroll to always on */
-html {
-    overflow-y: scroll;
-}
 
+/* Overall site structure */
 .grid-container {
     display: grid;
     width: 100%;
     height: 100vh;
     grid-template-areas:
-        "header header header header header"
-        "nav nav nav nav nav"
-        "main main main main main"
-        "footer footer footer footer footer";
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: auto 1fr 9fr auto;
+        "header header header header header header header header header header header header"
+        "main main main main main main main main main main main main"
+        "footer footer footer footer footer footer footer footer footer footer footer footer";
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto 1fr auto;
 }
 
-/* Header */
+/* Set section to flex column */
+.flex-col {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    justify-content: center;
+    align-items: center;
+    margin: 1em 0em;
+}
+
+/*Set section to flex row */
+.flex-row {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+/* SECTIONS */
+
+/* Header section */
 #header {
     grid-area: header;
     border-bottom: 3px solid $md-blue;
-    background-image: linear-gradient(to left, #C4C4C4, $nr-black 40%);
+    background-color:$nr-black;
+    margin-bottom: 5vh;
 }
 
+/* 'Ankimate' image in header section */
 #logo {
     max-width: 100%;
     max-height: 25vh;
     padding: 0.5em 1em;
 }
 
-/* Navbar */
-#navbar {
-    grid-area: nav;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 2em;
-    text-align: center;
-    background-color: $nr-black;
-}
-
-.nav-link {
-    margin-bottom: 0.1em;
-    padding: 0.2em 0.5em;
-    background-color: $md-blue;
-    font-variant: small-caps;
-    font-weight: bold;
-    text-decoration: none;
-    font-size: 1.5rem;
-}
-
-.active, .nav-link:hover {
-    background-color: $nr-black;
-    color: $md-blue;
-}
-
-/* Desktop styling for navbar (horizontal) */
-@media screen and (min-width: 768px) {
-    #navbar {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-    }
-    .nav-link {
-        width: calc(100% / 3.02);
-        margin-bottom: 0.1em;
-    }
-}
-
-/* Main */
+/* Main section */
 #main {
     grid-area: main;
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: 1fr;
-}
-
-/* Page title area (currently hidden) */
-.title {
-    grid-column: 5 / 9;
-    text-align: center;
-    font-size: 10vmin;
-}
-
-/* Index page welcome section */
-.welcome {
     grid-column: 2 / 12;
-    display: flex;
-    flex-direction: column;
-    margin: 1em 0em;
 }
 
-.welcome-header {
+/* Contact Page */
+.contact-item {
+    width: 70vw;
+    margin: 0.5em;
+    box-shadow: 0px 0px 2px $nr-black;
+    border-radius: 3px;
+    padding: 1em;
+    font-size: var(--fs-stand);
+}
+
+/* Message flash */
+.success {
+    display: flex;
     justify-content: center;
-    align-items: center;
+    align-self: center;
+    min-width: 50%;
+    border-radius: 0.5em;
+    padding: 0.5em 0.75em;
+    background-color: rgba(40, 167, 69, 0.3);
+    text-align: center;
+}
+
+.error {
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    min-width: 50%;
+    border-radius: 0.5em;
+    padding: 0.5em 0.75em;
+    background-color: rgba(255, 99, 71, 0.6);
+    text-align: center;
+}
+
+/* Footer */
+#footer {
+    grid-area: footer;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    height: fit-content;
+    margin-top: 1rem;
+    padding: 0.25em;
+    background-color: $nr-black;
+    color: $lt-blue;
+}
+
+#foot-left {
+    grid-column: 1 / 2; 
+    place-self: center start;
+}
+
+#foot-centre {
+    grid-column: 2 / 3;
+    text-align: center;
+}
+
+#foot-centre > a {
+    display: block;
+}
+
+/* ELEMENTS */
+
+/* Size Classes */
+.sml {
+    width: 150px;
+    height: 150px;
+
+    background-color: $nr-black;
+    color: $lt-blue;
+}
+
+.md {
+    width: 250px;
+    height: 200px;
+
+    margin: 0.5rem;
+}
+
+.lg {
+    width: 80%;
+}
+
+/*Page title element */
+.title {
     margin-bottom: 1em;
     border-radius: 5px;
     box-shadow: 0px 0px 2px $nr-black;
     padding: 0.25em;
     background-color: $nr-black;
     text-align: center;
-    h1 {
-        color: $lt-blue;
-    }
 }
 
-.welcome-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    height: 100%;
-    margin: 0.5em 0em;
-}
-
-.welcome-tile {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    margin: 0.5em 0.5em;
-    border-radius: 0px 0px 20px 20px;
-    box-shadow: 0px 0px 2px $nr-black;
+/* Form elements */
+.tile-title {
     background-color: $nr-black;
+    color: $lt-blue;
+    font-variant: small-caps;
     text-align: center;
-    h2 {
-        color: $lt-blue;
-    }
-}
-
-.welcome-tile-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-content: center;
-    width: 100%;
-    height: 90%;
-    border-radius: 0px 0px 20px 20px;
-    padding: 0.25em;
-    opacity: 0;
-    background-color: $lt-blue;
-    text-align: center;
-    transition: 0.8s ease;    
-}
-
-.tile-header {
-    opacity: 0.9;
-    background: $lt-blue;
-    h2 {
-        color: $nr-black;
-    }
-    transition: 0.8s ease;
-}
-
-/* Used to offset animation timing */
-#one {
-    .welcome-tile-body, .tile-header {
-        animation-delay: 2s;
-        animation-duration: 1s;
-        animation-fill-mode: forwards;
-    } 
-    .welcome-tile-body {
-        animation-name: body;
-    }
-    .tile-header {
-        animation-name: head;
-    }
-}
-#two {
-    .welcome-tile-body, .tile-header {
-        animation-delay: 4s;
-        animation-duration: 1s;
-        animation-fill-mode: forwards;
-    } 
-    .welcome-tile-body {
-        animation-name: body;
-    }
-    .tile-header {
-        animation-name: head;
-    }
-}
-#three {
-    .welcome-tile-body, .tile-header {
-        animation-delay: 6s;
-        animation-duration: 1s;
-        animation-fill-mode: forwards;
-    } 
-    .welcome-tile-body {
-        animation-name: body;
-    }
-    .tile-header {
-        animation-name: head;
-    }
-}
-/* Animations */
-@keyframes head {
-    from {background-color: $lt-blue; color: $nr-black;}
-    to {background-color: $nr-black; color: $lt-blue;}
-}
-@keyframes body {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
-
-/* Desktop styling for tiless (horizontal) */
-@media screen and (min-width: 768px) {
-    .welcome-body {
-        flex-direction: row;
-    }
-    .welcome-tile {
-        width: calc(100% / 3.5);
-    }
-}
-
-/* About page collapsible elements */
-.flex-container {
-    grid-column: 2 / 12;
-    display: flex;
-    flex-direction: column;
-}
-
-.coll-container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-}
-
-.collapsible {
-    cursor: pointer;
+    font-size: var(--fs-med);
+    border-radius: 30px 30px 0px 0px;
+    border-bottom: 2px solid $lt-blue;
 }
 
 .tile {
-    width: 100%;
-    margin-bottom: 1em;
-    background-color: $md-blue;
-    .active {
-        background-color: $nr-black;
-    }
-}
-
-.coll-header {
     display: flex;
-    flex-direction: row;
-}
-
-.tile-title {
-    text-align: center;
-    h2 {
-        color: $nr-black;
-    }
-    button {
-        margin: 0.5em;
-        padding: 0em;
-        background: none;
-        font-weight: bold;
-        font-size: 5vmin;
-        color: $nr-black;
-    }
-}
-
-.coll-left, .coll-right {
-    transition: 1s;
-}
-.coll-left {
+    flex-direction: column;
     width: 100%;
+    height: 80%;
+    font-weight: bold;
+    font-size: var(--fs-stand);
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0px 0px 30px 30px;
     background-color: $lt-blue;
+    margin-bottom: 0.5rem;
+    color: $nr-black;
 }
-.coll-right {
+
+/* Override default underline decoration of link */
+.tile:hover {
+    text-decoration: none;
+}
+
+/* Index Page */
+
+#jp, #cn {
+    font-size: var(--fs-lg);
+}
+
+/* Build Page Elements */
+
+/* Styling shared by input form (top) and download form (bottom) */
+#input, #download {
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
+/* Input form */
+.icon {
+    height: fit-content;
+    width: fit-content;
+    padding: 1rem;
+    font-weight: bold;
+    font-size: var(--fs-med);
+    text-align: center;
+    border-radius: 30px 30px;
+    margin-bottom: 2.5vh;
+}
+
+/* Set image to display */
+#upload-icon {
+    content: url("upload-blck.svg");
+    width: 50%;
+    height: 65%;
+}
+
+/* Set image to on hover */
+label:hover>#upload-icon {
+    content: url("upload-ltblue.svg");
+}
+
+/* Results table */
+
+#output {
+    /* Hide table until AJAX call returns */
+    display: none;
+
+    width: 100%;
+    overflow-x: auto; 
+}
+
+#results-table {
+    display: block;
+    max-width: 100%;
+    font-size: var(--fs-stand);
+    padding-bottom: 1rem;
+    margin: 1.5rem;
+}
+
+#results-table td {
+    justify-content: center;
+    align-items: center;
+    border: 1px solid $nr-black;
     padding: 0.5em;
+    font-size: var(--fs-stand);
+}
+
+/* Empty cells push checkboxes into correct column */
+#results-table .empty-td {
+    border: none;
+}
+
+#results-table th {
+    font-size: var(--fs-stand);
+}
+
+#results-table .checkbox {
+    border: none;
+    vertical-align: middle;
+}
+
+#results-table input[type=checkbox] {
+    /* Cursor only appears when on checkbox */
+    cursor: pointer;
+    transform: scale(1.5);
+}
+
+/* All cells in 'word' column get background colour */
+#results-table td:nth-child(1) {
     background-color: $nr-black;
-    font-size: 5vmin;
+    color:$lt-blue;
+}
+
+/* Header for Results table and styling for first cell (word cell) in row */
+.result-header {
+    padding: 0.4rem;
+    padding-bottom: 0.5rem;
+    background-color: $nr-black;
     color: $lt-blue;
 }
 
-.tile-body {
-    display: flex;
-    flex-direction: column;
+/* Download form selects */
+#front, #back {
+    width: 90%;
+    height: 50%;
+    font-size: var(--fs-med);
+    text-align: center;
+    background-color: $lt-blue;
+}
+
+/* Override flex-row to center plus and minus buttons */
+.center {
+    justify-content: center;
+}
+
+/* ABOUT PAGE */
+
+/* Collapsible elements */
+
+.box {
+    width: 100%;
+    margin-bottom: 1em;
+}
+
+.no-wrap {
+    flex-wrap: nowrap;
+}
+
+/* Button element of collapsible box */
+.box-header {
+    background-color: $lt-blue;
+    text-align: center;
+}
+
+.header-left {
+    align-self: center;
+    width: 95%;
+    padding: 0.5em;
+    transition: 1s;
+    h2 {
+        color: $nr-black;
+    }
+}
+
+.header-right {
+    width: fit-content;
+    padding: 0.5em;
+    border-left: 2px solid $lt-blue;
+    background-color: $nr-black;
+    font-size: var(--fs-med);
+    color: $lt-blue;
+}
+
+.box-header:hover, .selected {
+    transition: 1s;
+    background: $nr-black;
+    
+    h2 {
+        color: $lt-blue;
+    }
+}
+
+.box-body {
     max-height: 0;
-    background-color: $md-blue;
+    background-color: $lt-blue;
     overflow-x: auto;
     transition: max-height 0.5s ease-out;
-    ul {
-        margin: 2em;
-        list-style-position: outside;
-        li {
-            margin-bottom: 3px;
-        }
-    } 
+    
     a {
         color: $dk-blue;
     }
     a:hover {
         color:$nr-black;
     }
+
+    /* Table styling in 'features' section */
+    ul {
+        margin: 1rem;
+        list-style-position: inside;
+    } 
+    
     table {
-        display: block;
-        place-self: center;
         max-width: 95%;
-        margin: 2em;
+        /* Centre table */
+        margin: 2em auto;
+        /* Make borders single */
         border-collapse: collapse;
-        background-color: $lt-blue;
     }
-    td, th {
-        box-shadow: 0px 0px 1px $nr-black;
-        padding: 5px;
-        text-align: left;
-        font-size: 1rem;
-    }
+
     th {
         text-align: center;
         font-variant: small-caps;
-    }
-}
-
-.tile-body-content {
-    margin: 2em;
-}
-
-.coll-header:hover, .selected {
-    .coll-left {
         background-color: $nr-black;
-        color: $nr-black;
-        button {
-            background: none;
-            color: $lt-blue;
-        }
-    }
-    .coll-right {
-        background-color: $lt-blue;
-        color: $nr-black;
-    }
-}
-
-/* Build Page */
-/* Data upload form / Data download form */
-.build-container {
-    grid-column: 1 / 13;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.form-container, .table-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-width: 60vw;
-    max-width: 100%;
-    width: auto;
-    margin: 1em;
-    box-shadow: 0px 0px 2px $nr-black;
-    border-radius: 5px;
-}
-
-.form-header {
-    width: 100%;
-    border-radius: 5px;
-    background-color: $nr-black;
-    text-align: center;
-    h3 {
         color: $lt-blue;
     }
+
+    td, th {
+        box-shadow: 0px 0px 1px $nr-black;
+        font-size: var(--fs-stand);
+    }
+    
 }
 
-#input {
-    display: flex;
-    flex-direction: column;
-    margin: 0.25em;
-    text-align: center;
+/* Adds margin to content, but prevents content showing */
+.box-body-content {
+    margin: 2rem;
 }
 
-.form-element-title {
-    width: 100%;
-    background-color: $lt-blue;
-    text-align: center;
-    font-size: 1rem;
-    color: $nr-black;
-}
+/* User Interactions */
 
-.form-element-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    max-width: 95%;
-    width: auto;
-    margin: 0.5em;
-    box-shadow: 0px 0px 2px $nr-black;
-    text-align: center;
-}
-
-.form-element {
-    width: 80%;
-    margin: 1em;
-    padding: 0.5em;
-}
-
-#file-input {
-    min-width: 0;
-    width: 100%;
-    cursor: pointer;
+.std-btn, .plus-minus-btn {
+    align-self: center;
+    margin: 1rem;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
     background-color: $nr-black;
-    font-size: 3vmin;
+    cursor: pointer;
+    font-variant: small-caps;
+    font-size: var(--fs-stand);
+    color: $lt-blue;
+    transition: 0.3s;
+}
+
+.plus-minus-btn {
+    width: 50px;
+    font-size: var(--fs-med);
+}
+
+.std-btn:hover, .plus-minus-btn:hover {
+    transform: scale(1.10);   
+}
+
+.pointer, input, select {
+    cursor: pointer;
+}
+
+.hover:hover {
+    background-color: $nr-black;
     color: $lt-blue;
 }
 
-.radio-container {
-    display: inline-block;
+a:hover {
+    text-decoration: underline;
 }
 
-.custom-radio {
-    display: block;
-    margin-left: 20px;
-    margin: 1em;
-    cursor: pointer;
-    transform: scale(2.5);
-}
+/* User Feedback */
 
-/* Results table */
-.table-container {
-    max-width: 95%;
-    min-width: 90vw;
-    overflow-x: scroll;
-}
-
-#output {
-    display: none;
-    flex-direction: column;
-    justify-items: center;
-    align-items: center;
-    max-width: 100%;
-    margin: 0.5em;
-    margin-left: 1em;
-    text-align: center;   
-}
-
-#placeholder {
-    min-width: 40%;
-    margin: 1em;
-    box-shadow: 0px 0px 2px $nr-black;
-    border-radius: 5px;
-    padding: 2em;
-    background-color: $lt-blue;
-    font-variant: small-caps;
-    font-weight: bold;
-    text-align: center;
-    color: $nr-black;
-}
-
-#results-table {
-    display: block;
-    max-width: 100%;
-    font-size: 1rem;
-}
-
-/* "Loading" elements - Flashing elipsis */
 @keyframes fetching {
     0% {color: $nr-black;}
     25% {content: "."; color: $lt-blue;}
@@ -539,116 +536,8 @@ html {
     width: 0px;
 }
 
-#output td {
-    justify-content: center;
-    align-items: center;
-    border: 1px solid $nr-black;
-    padding: 0.5em;
-    font-size: 1rem;
-}
-#output th {
-    font-size: 1rem;
-}
-#output .checkbox {
-    border: none;
-    vertical-align: middle;
-}
-#output input[type=checkbox] {
-    cursor: pointer;
-    transform: scale(1.5);
-}
-#output td:nth-child(1) {
-    background-color: $nr-black;
-    color:$lt-blue;
-}
-.out-col {
-    padding: 0.38em;
-    padding-bottom: 0.4em;
-    background-color: $nr-black;
-    color: $lt-blue;
-}
-
-/* Data download form */
-.select-container {
-    margin: 0.5em;
-    box-shadow: 0px 0px 2px $nr-black;
-    padding: 0.25em;
-    background-color: $lt-blue;
-    select {
-        margin: 0.5em;
-        border: 1px solid $nr-black;
-        padding: 0.25em;
-        cursor: pointer;
-        color: $nr-black;
-    }
-    span {
-        font-variant: small-caps;
-        font-weight: bold;
-        color: $nr-black;
-    }
-}
-.select-container:hover {
-    background-color: $nr-black;
-    span {
-        color: $lt-blue;
-    }
-}
-
-/* Contact Page */
-.contact {
-    grid-column: 1 / 13;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-#contact-form {
-    grid-column: 1 / 13;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-.contact-item {
-    width: 70vw;
-    margin: 0.5em;
-    box-shadow: 0px 0px 2px $nr-black;
-    border-radius: 3px;
-    padding: 1em;
-    font-size: 1rem;
-}
-
-/* Message flash */
-.success {
-    display: flex;
-    justify-content: center;
-    align-self: center;
-    min-width: 50%;
-    border-radius: 0.5em;
-    padding: 0.5em 0.75em;
-    background-color: rgba(40, 167, 69, 0.3);
-    text-align: center;
-    color: $nr-black;
-}
-
-.error {
-    display: flex;
-    justify-content: center;
-    align-self: center;
-    min-width: 50%;
-    border-radius: 0.5em;
-    padding: 0.5em 0.75em;
-    background-color: rgba(255, 99, 71, 0.6);
-    text-align: center;
-    color: $nr-black;
-}
-
-/* Footer */
-#footer {
-    grid-area: footer;
-    height: 6vh;
-    align-items: center;
-    padding: 0.25em;
-    background-color: $nr-black;
-    color: $lt-blue;
+:checked + label > img {
+    border: 2px solid $nr-black;
+    border-radius: 5px;
+    padding: 1px;
 }

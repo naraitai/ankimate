@@ -4,28 +4,31 @@
     <head>
         <title>Ankimate</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--CSS and JS-->
         <link rel="stylesheet" type="text/css" href="../static/styles.css"/>
+        <script src="../static/scripts.js"></script>
+        <!--Favicon images-->
         <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}">
         <link rel="alternate icon" href="{{ url_for('static', filename='favicon.ico') }}">
-        <script src="../static/scripts.js"></script>
+        
     </head>
-    <body>
-        <div class="grid-container">
-            <header id="header">
-                <a href="/"><img id="logo" src="{{ url_for('static', filename='ankimate.svg') }}"></a>
-            </header>
-            <nav id="navbar">
-                <a class="nav-link" href="/build">Build</a>
-                <a class="nav-link" href="/about">About</a>
-                <a class="nav-link" href="/contact">Contact</a>
+    <body class="grid-container">
+        <header id="header">
+            <a href="/"><img id="logo" src="{{ url_for('static', filename='ankimate.svg') }}"></a>
+        </header>
+        <main id="main">
+            {% block main %}{% endblock %}
+        </main>
+        <footer id="footer">
+            <div id="foot-left">
+                v.3.0
+            </div>
+            <nav id="foot-centre">
+                <a href="/about">About</a>
+                <a href="/contact">Contact</a>
+                <a href="/about">Acknowledgements</a>
             </nav>
-            <main id="main">
-                {% block main %}{% endblock %}
-            </main>
-            <footer id="footer">
-                V1.1
-            </footer>
-        </div>
+        </footer>
     </body>
 </html>
 

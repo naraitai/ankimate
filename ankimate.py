@@ -52,24 +52,42 @@ def allowed_file(filename):
 def index():
     return render_template("index.html") 
 
+@app.route("/build_jp", methods=["GET"])
+def build_jp():
+    session["lang"] = "jp"
+
+    return redirect("/build")
+
+@app.route("/build_cn", methods=["GET"])
+def build_cn():
+    session["lang"] = "cn"
+    return redirect("/build")
+
 #Build simply renders page template
-@app.route("/build")
+@app.route("/build", methods=["GET", "POST"])
 def build():
 
     #HTML data-form options (input language / translation & output options)
     languages = ["JP", "CMN"]
     translation = ["none", "english"]
-    data = ["sentence", "translation", "transcription"]
 
-    return render_template("build.html", languages=languages, translation=translation, data=data)
+    data = ["sentence", "translation", "transcription", "word"]
+    
+    if session["lang"] == "jp":
+        lang = "日本語"
+    elif session["lang"] == "cn":
+        lang = "中文"
+
+    return render_template("build.html", lang=lang, languages=languages, translation=translation, data=data)
 
 #Process input data using selected options
-@app.route("/process", methods=["POST"])
-def process():
+@app.route("/fetch", methods=["POST"])
+def fetch():
 
     #Store user selected settings in session
     settings = request.form
     session["settings"] = settings
+
     #Set maxmium number of matched sentences to return (Future: Allow users to set this value)
     match_no = 5
     
@@ -100,7 +118,7 @@ def process():
                 db = con.cursor()
                 
                 #Get language option selected to complete query
-                lang = settings["lang"].upper()
+                lang = session["lang"].upper()
                 
                 #Iterate accross user vocabulary
                 for row in reader:
@@ -116,7 +134,7 @@ def process():
                     #Search for sentences with translations and matched to grade
                     elif settings["trans"] == "en":
                         db.execute(f"SELECT sentences{lang}.sentence, sentences{lang}.transcription, sentencesEN.sentence AS translation \
-                                FROM trans{lang}_EN JOIN sentences{lang} ON trans{lang}_EN.{settings['lang']}_id = sentences{lang}.id \
+                                FROM trans{lang}_EN JOIN sentences{lang} ON trans{lang}_EN.{session['lang']}_id = sentences{lang}.id \
                                 JOIN sentencesEN ON trans{lang}_EN.en_id = sentencesEN.id \
                                 WHERE sentences{lang}.tokens LIKE ? AND sentences{lang}.grade <= (SELECT grade FROM level{lang} \
                                 WHERE dict_id = (SELECT id FROM dictionary{lang} WHERE word = ? OR transcription = ?)) \
@@ -125,7 +143,7 @@ def process():
                         #Search for sententences with translations without matching to grade (wider search)
                         if not results:
                             db.execute(f"SELECT sentences{lang}.sentence, sentences{lang}.transcription, sentencesEN.sentence AS translation \
-                                FROM trans{lang}_EN JOIN sentences{lang} ON trans{lang}_EN.{settings['lang']}_id = sentences{lang}.id \
+                                FROM trans{lang}_EN JOIN sentences{lang} ON trans{lang}_EN.{session['lang']}_id = sentences{lang}.id \
                                 JOIN sentencesEN ON trans{lang}_EN.en_id = sentencesEN.id \
                                 WHERE sentences{lang}.tokens LIKE ? \
                                 ORDER BY grade, frequency LIMIT 5;", ("%[" + word + "]%",))
@@ -215,8 +233,11 @@ def reload ():
 @app.route("/download", methods=["POST"])
 def download():
 
-    #Get user selected data structure
-    download_struct = request.form
+    #Get user selected data structure and store values as a list
+    download_struct = request.form.to_dict().values()
+    fields = []
+    for item in download_struct:
+        fields.append(item)
 
     #Get sentences from session and data output options
     single = session["selected"]
@@ -227,36 +248,21 @@ def download():
     
     #Iterate across selected sentences
     for entry in single:
-        count = 1
-        #Iterate across all user selected data fields (front, back...) (Future: Add function so users can add more card fields)
-        for field in download_struct:
-            field_val = download_struct[field]
-
-            #Do not enter data for blank fields
-            if field_val == "none":
-                file.write("")
-                if count == len(download_struct):
-                    file.write("\n")
-                    continue
-                else:
-                    continue
+        #Iterate accross all form fields and add data to download file (tab separated)#
+        length = len(download_struct) - 1
+        count = 0
+        while count < length:
+            if fields[count] == "word":
+                file.write(f"{entry}\t")
             else:
-                #Do not enter lines where no sentence found
-                not_found = ["No sentences found.", "No translation found."]
-                if single[entry][field_val] in not_found and (single[entry]["translation"] in not_found or single[entry]["sentence"] in not_found):
-                    if count == len(download_struct) and field_val != "none":
-                        file.write(f"\n")
-                    continue
-                #Front added first
-                if field == "front":
-                    file.write(f"{single[entry][field_val]}")
-                #Last field added with newline break
-                elif count == len(download_struct) and field_val != "none":
-                    file.write(f"\t{single[entry][field_val]}\n")
-                #Middle field value
-                else:
-                    file.write(f"\t{single[entry][field_val]}")
-                count += 1
+                file.write(f"{single[entry][fields[count]]}\t")
+            count += 1
+        #Add final field and escape to new line.
+        if fields[count] == "word":
+                file.write(f"{entry}\n")
+        else:
+            file.write(f"{single[entry][fields[count]]}\n")
+
     file.close()
 
     return send_file(filename, as_attachment=True)

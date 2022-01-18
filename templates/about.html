@@ -5,122 +5,115 @@
 {% endblock %}
 
 {% block main %}
-    <div class="flex-container">
+    <div class="flex-col">
         <h1 class="title" hidden>About</h1>
         <!--Sets collapsible element containing information on project-->
-        <div class="coll-container">
-            <div class="collapsible tile">
-                <div class="coll-header">
-                    <div class="coll-left">
-                        <h2 class="tile-title">
-                            <button type="button">The Project</button>
-                        </h2>
-                    </div>
-                    <div class="coll-right">
-                        &#43
-                    </div>
-                </div>
-                <div class="tile-body">
-                    <div class="tile-body-content">
-                        <p>
-                            Anki is an incredibly useful tool for acquiring a range of knowledge, including foreign languages.
-                            The problem is it takes a lot of work to create good quality, personalised study cards.
-                        </p>
-                        <p>
-                            Ankimate is intended to help reduce this workload for students of Japanese and Mandarin Chinese.
-                        </p>
-                        <p>
-                            It's simple to operate. Upload a list of vocabulary you want to learn. Select some basic options.
-                            Review the information that comes back. Re-search the database if desired. Download data and 
-                            open it in Anki.
-                        </p>
-                        <p>
-                            Ankimate is under active development and features will be added over time. You can <a href="/contact">email to suggest improvements</a>.
-                        </p>
-                    </div>
+        <div class="collapsible box">
+            <!-- Box header -->
+            <button class="box-header flex-row no-wrap">
+                <section class="header-left">
+                    <h2>The Project</h2>
+                </section>
+                <section class="header-right">
+                    &#43
+                </section>
+            </button>
+            <div class="box-body">
+                <div class="box-body-content">
+                    <p>
+                        Anki is an incredibly useful tool for acquiring a range of knowledge, including foreign languages.
+                        The problem is it takes a lot of work to create good quality and personalised study cards.
+                    </p>
+                    <p>
+                        Ankimate is intended to help reduce this workload for students of Japanese and Mandarin Chinese.
+                    </p>
+                    <p>
+                        It's operation is simple. Upload a file containing vocabulary you intend to learn. Set some basic
+                        settings. Review the returned data. Re-search the database if desired. Download data and 
+                        open it in Anki
+                    </p>
+                    <p>
+                        Ankimate is under active development and features will be added over time. You can review and 
+                        track releases below or suggest improvements <a href="/contact">here</a>.
+                    </p>
                 </div>
             </div>
         </div>
+        
         <!--Sets collapsible element containing information on Ankimate features-->
-        <div class="coll-container">
-            <div class="collapsible tile">
-                <div class="coll-header">
-                    <div class="coll-left">
-                        <h2 class="tile-title">
-                            <button type="button">Features</button>
-                        </h2>
-                    </div>
-                    <div class="coll-right">
-                        &#43
-                    </div>
-                </div>
-                <div class="tile-body">
-                    <table>
-                        <tr>
-                            <th>Current</th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <ul>
-                                    <li>Upload vocabulary file.</li>
-                                    <li>Set language (Japanese or Mandarin Chinese).</li>
-                                    <li>Toggle English translation</li>
-                                    <li>Set front and back values for basic Anki card creation.</li>
-                                    <li>Set value for one extra Anki card field</li>
-                                    <li>Reload sentences (if available)</li>
-                                    <li>Download file for import into Anki</li>
-                                </ul>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+        <div class="collapsible box">
+            <!-- Box header -->
+            <button class="box-header flex-row no-wrap">
+                <section class="header-left">
+                    <h2>Features</h2>
+                </section>
+                <section class="header-right">
+                    &#43
+                </section>
+            </button>
+            <div class="box-body">
+                <table>
+                    <tr>
+                        <th>Current</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ul>
+                                <li>Upload vocabulary file.</li>
+                                <li>Set language (Japanese or Mandarin Chinese).</li>
+                                <li>Toggle English translation</li>
+                                <li>Set front and back values for basic Anki card creation.</li>
+                                <li>Set value for one extra Anki card field</li>
+                                <li>Reload sentences (if available)</li>
+                                <li>Download file for import into Anki</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
         <!--Sets collapsible element containing acknowledgments-->
-        <div class="coll-container">
-            <div class="collapsible tile">
-                <div class="coll-header">
-                    <div class="coll-left">
-                        <h2 class="tile-title">
-                            <button type="button">Acknowledgments</button>
-                        </h2>
-                    </div>
-                    <div class="coll-right">
-                        &#43
-                    </div>
-                </div>
-                <div class="tile-body">
-                    <div class="tile-body-content">
-                        <p>
-                            This project makes use of data and resources created by others. 
-                            What follows is a list of those resources with links if you want to check them out.
-                        </p>
-                        <h3><a href="https://tatoeba.org/en/">Tatoeba:</a></h3>
-                        <p>
-                            A searchable database of sentences and translations in a number of languages.
-                            <a href="https://creativecommons.org/licenses/by/2.0/">CC-BY(2.0)</a>
-                        </p>
-                        <h3><a href="https://www.edrdg.org/jmdict/j_jmdict.html">JMDict:</a></h3>
-                        <p>
-                            A Japanese dictionary project. 
-                            <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA(4.0)</a>
-                        </p>
-                        <h3><a href="http://corpus.leeds.ac.uk/list.html">Leeds Frequency Corpora:</a></h3>
-                        <p>
-                            A frequency list based on internet corpora. 
-                            <a href="https://creativecommons.org/licenses/by/2.5/">CC BY(2.5)</a>
-                        </p>
-                        <h3><a href="https://www.dampfkraft.com/nlp/how-to-tokenize-japanese.html">Fugashi:</a></h3>
-                        <p>
-                            A Japanese tokenizer for Python to aid natural language processing (NLP).
-                            <a href="https://www.dampfkraft.com/nlp/how-to-tokenize-japanese.html">Usage guide</a>
-                        </p>
-                        <h3><a href="https://pypi.org/project/jieba/">Jieba:</a></h3>
-                        <p>
-                            A Mandarin Chinese tokenizer for Python to aid natural language processing (NLP).
-                            <a href="https://pypi.org/project/jieba/">Project information</a>
-                        </p>
-                    </div>
+        <div class="collapsible box">
+            <!-- Box header -->
+            <button class="box-header flex-row no-wrap">
+                <section class="header-left">
+                    <h2>Acknowledgments</h2>
+                </section>
+                <section class="header-right">
+                    &#43
+                </section>
+            </button>
+            <div class="box-body">
+                <div class="box-body-content">
+                    <p>
+                        This project makes use of data and resources created by others. 
+                        What follows is a list of those resources as well as links to these resouces.
+                    </p>
+                    <h3><a href="https://tatoeba.org/en/">Tatoeba:</a></h3>
+                    <p>
+                        A searchable database of sentences and translations in a number of languages.
+                        <a href="https://creativecommons.org/licenses/by/2.0/">CC-BY(2.0)</a>
+                    </p>
+                    <h3><a href="https://www.edrdg.org/jmdict/j_jmdict.html">JMDict:</a></h3>
+                    <p>
+                        A Japanese dictionary project. 
+                        <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA(4.0)</a>
+                    </p>
+                    <h3><a href="http://corpus.leeds.ac.uk/list.html">Leeds Frequency Corpora:</a></h3>
+                    <p>
+                        A frequency list based on internet corpora. 
+                        <a href="https://creativecommons.org/licenses/by/2.5/">CC BY(2.5)</a>
+                    </p>
+                    <h3><a href="https://www.dampfkraft.com/nlp/how-to-tokenize-japanese.html">Fugashi:</a></h3>
+                    <p>
+                        A Japanese tokenizer for Python to aid natural language processing (NLP).
+                        <a href="https://www.dampfkraft.com/nlp/how-to-tokenize-japanese.html">Usage guide</a>
+                    </p>
+                    <h3><a href="https://pypi.org/project/jieba/">Jieba:</a></h3>
+                    <p>
+                        A Mandarin Chinese tokenizer for Python to aid natural language processing (NLP).
+                        <a href="https://pypi.org/project/jieba/">Project information</a>
+                    </p>
                 </div>
             </div>
         </div>
