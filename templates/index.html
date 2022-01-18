@@ -5,39 +5,24 @@
 {% endblock %}
     
 {% block main %}
-    <div class="welcome">
-        <!--Page title-->
-        <div class="welcome-header">
-            <h1>Anki cards in 3 steps...</h1>
+    <h1 hidden>Index</h1>
+    <h2 class="title">I'm studying...</h2>
+    <div class="flex-row">
+        <div class="md">
+            <section class="tile-title">
+                Japanese
+            </section>
+            <a id="jp" class="tile hover" href="/build_jp">
+                日本語
+            </a>
         </div>
-        <div class="welcome-body">
-            <!--Upload step tile-->
-            <div id="one" class="welcome-tile">
-                <div class="tile-header">
-                    <h2 class="tile-header">Upload</h2>
-                </div>
-                <div class="welcome-tile-body">
-                    <p>Upload a vocabulary list</p>
-                </div>
-            </div>
-            <!--Review step tile-->
-            <div id="two" class="welcome-tile">
-                <div class="tile-header">
-                    <h2 class="tile-header">Review</h2>
-                </div>
-                <div class="welcome-tile-body">
-                    <p>Review the example sentences</p>
-                </div>
-            </div>
-            <!--Import step tile-->
-            <div id="three" class="welcome-tile">
-                <div class="tile-header">
-                    <h2 class="tile-header">Import</h2>
-                </div>
-                <div class="welcome-tile-body">
-                    <p>Download and import data into Anki.</p>
-                </div>
-            </div>
+        <div class="md">
+            <section class="tile-title">
+                Mandarin
+            </section>
+            <a id="cn" class=" tile hover" href="/build_cn">
+                中文
+            </a>
         </div>
     </div>
 {% endblock %}

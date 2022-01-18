@@ -5,143 +5,106 @@
 {% endblock %}
 
 {% block main %}
-    <div class="build-container">
-        <h2 hidden>Build</h2>
-        <!--Form for user to upload file and search for sentences-->
-        <div class="form-container">
-            <h3 class="form-header">Upload</h3>
-            <form id="input">
-                <!--File upload-->
-                <div class="form-element-container">
-                    <h4 class="form-element-title">Vocabulary List</h3>
-                    <div class="form-element">
-                        <input id="file-input" name="file" type="file" value="file" required/>
-                    </div>
+    <div class="flex-col">
+        <h1 class="icon sml">
+            {{ lang }}
+        </h1>
+        <form id="input" class="flex-col">
+            <div class="flex-row">
+                <div class="md">
+                    <section class="tile-title">
+                        Upload
+                    </section>
+                    <input name="file" type="file" value="file" id="actual-btn" hidden/>
+                    <label class="tile pointer hover" for="actual-btn">
+                        <div id="upload-icon"></div>
+                        <p id="file-text" class="hover"></p>
+                    </label>            
                 </div>
-                <!--Language selection-->
-                <div class="form-element-container">
-                    <h4 class="form-element-title">Language</h3>
-                    <div class="form-element">
-                        <fieldset name="lang">
-                            <div class="radio-container">
-                                <label for="jp">
-                                    <img src="../static/radioJP.svg">
-                                    <input class="custom-radio" type="radio" name="lang" value="jp" required>    
-                                </label>
-                            </div>
-                            <div class="radio-container">
-                                <label for="cn">
-                                    <img src="../static/radioCN.svg">
-                                    <input class="custom-radio" type="radio" name="lang" value="cn" required>
-                                </label>
-                            </div>
+                <div class="md">
+                    <section class="tile-title">
+                        Translation
+                    </section>
+                    <section class="tile">
+                        <fieldset class="flex-row" name="trans">
+                            <input id="off" type="radio" name="trans" value="none" checked hidden>
+                            <label for="off" type="radio">
+                                <img src="/static/radioN.svg">
+                            </label>
+                            <input id="on" type="radio" name="trans" value="en" hidden>
+                            <label for="on" type="radio">
+                                <img src="/static/radioY.svg">
+                            </label>
                         </fieldset>
-                    </div>
+                    </section>
                 </div>
-                <!--Toggle translation on or off-->
-                <div class="form-element-container">
-                    <h4 class="form-element-title">Translation</h3>
-                    <div class="form-element">
-                        <fieldset name="trans">
-                            <div class="radio-container">
-                                <label for="none">
-                                    <img src="../static/radioN.svg">
-                                    <input class="custom-radio" type="radio" name="trans" value="none" checked>
-                                </label>
-                            </div>
-                            <div class="radio-container">
-                                <label for="en">
-                                    <img src="../static/radioY.svg">
-                                    <input class="custom-radio" type="radio" name="trans" value="en">
-                                </label>
-                            </div>
-                        </fieldset>
-                    </div>
-                    <!--Submit form to upload file and search for sentences-->
-                    <div class="form-element">
-                        <button id="submit-btn">
-                            Submit
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <!--Display results when returned-->
-        <div class="table-container">
-            <h3 class="form-header">Review</h3>
-            <!--Basic placholder-->
-            <div id="placeholder">
-                <!--Give user feedback that database is being searched-->
-                <p id="placeholder-text">Sentences will appear here</p>
-                <span id="progress" class="fetching" hidden></span>
             </div>
-            <!--Not displayed until AJAX response-->
-            <form id="output">
-                <table id="results-table">
-                    <thead>
-                        <tr>
-                            <th><h3 class="out-col">Word</h3></th>
-                            <th><h3 class="out-col">Sentence</h3></th>
-                            <th><h3 id="trans"></h3></th>
-                            <th><button id="reload-btn">Reload</button></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                            <!--Populated with Ajax response-->
-                    </tbody>
-                </table>
-            </form>
+            <button class="std-btn">Get sentences</button>
+        </form>
+        <div class="lg">
+            <section class="tile-title">
+                Sentences
+            </section>
+            <section class="tile">
+                <p id="placeholder-text">Your sentences will appear here.</p>
+                <p id="progress" class="fetching" hidden></p>           
+                <form id="output">
+                    <table id="results-table">
+                        <thead>
+                            <tr>
+                                <th><h3 class="result-header">Word</h3></th>
+                                <th><h3 class="result-header">Sentence</h3></th>
+                                <th><h3 id="trans" class="result-header"></h3></th>
+                                <th><button id="reload-btn" class="std-btn">Reload</button></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <!--Populated with Ajax response-->
+                        </tbody>
+                    </table>
+                </form>
+            </section>
         </div>
-        <!--Form for user to select the data structure of download file-->
-        <div class="form-container">
-            <h3 class="form-header">Download</h3>
-            <form id="download" action="/download" method="post">
-                <div class="form-element-container">
-                    <div class="form-element">
-                        <formfield id="fields" name="out-opt">
-                            <!--Front field for Anki cards-->
-                            <div class="select-container">
-                                <label for="front"><span>Front</span>
-                                    <select id="front" name="front">
-                                        {% for d in data %}
-                                            {% if d == "sentence" %}
-                                                <option value="{{ data[loop.index - 1] }}" selected>{{ data[loop.index - 1].capitalize() }}</option>
-                                            {% else %}
-                                                <option value="{{ data[loop.index - 1] }}">{{ data[loop.index - 1].capitalize() }}</option>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </select>
-                                </label>
-                            </div>
-                            <!--Back field for Anki cards-->
-                            <div class="select-container">
-                                <label for="back"><span>Back</span>
-                                    <select id="back" name="back">
-                                        {% for d in data %}
-                                            {% if d == "transcription" %}
-                                                <option value="{{ data[loop.index - 1] }}" selected>{{data[loop.index - 1].capitalize() }}</option>
-                                            {% else %}
-                                                <option value="{{ data[loop.index - 1] }}">{{ data[loop.index - 1].capitalize() }}</option>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </select>
-                                </label>
-                            </div>
-                            <!--Optional extra fields for Anki cards added via JavaScript-->
-                        </formfield>
-                    </div>
-                    <div class="plus-minus">
-                        <button id="add">+</button>
-                        <button id="remove">-</button>
-                    </div>
-                    <!--Submit to download file-->
-                    <div class="form-element">
-                        <button id="submit-btn">
-                            Submit
-                        </button>
-                    </div>
+        <form id="download" class="flex-col" action="/download" method="post">
+            <div id="fields" class="flex-row">
+                <div class="md">
+                    <section class="tile-title">
+                        Front
+                    </section>
+                    <section class="tile">
+                        <select id="front" name="front">
+                            {% for d in data %}
+                                {% if d == "sentence" %}
+                                    <option value="{{ data[loop.index - 1] }}" selected>{{ data[loop.index - 1].capitalize() }}</option>
+                                {% else %}
+                                    <option value="{{ data[loop.index - 1] }}">{{ data[loop.index - 1].capitalize() }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </section>
                 </div>
-            </form>
-        </div>
+                <div class="md">
+                    <section class="tile-title">
+                        Back
+                    </section>    
+                    <section class="tile">
+                        <select id="back" name="back">
+                            {% for d in data %}
+                                {% if d == "transcription" %}
+                                    <option value="{{ data[loop.index - 1] }}" selected>{{data[loop.index - 1].capitalize() }}</option>
+                                {% else %}
+                                    <option value="{{ data[loop.index - 1] }}">{{ data[loop.index - 1].capitalize() }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </section>        
+                </div>
+            </div>
+            <div class="flex-row center">
+                <button id="add" class="plus-minus-btn">&#43</button>
+                <button id="remove" class="plus-minus-btn">&#8722</button>
+            </div>
+            <button class="std-btn">Download</button>   
+        </form>
     </div>
 {% endblock %}
