@@ -232,7 +232,7 @@ def download():
             else:
                 output.write(f"{selected_query_results[entry][fields[count]]}\n")
         
-    return send_file(f"downloads\{filename}", as_attachment=True, attachment_filename=filename)
+    return send_file(f"downloads/{filename}", as_attachment=True, attachment_filename=filename)
 
 # Renders page template only
 @app.route("/about")
