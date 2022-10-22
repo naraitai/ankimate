@@ -47,15 +47,13 @@ DOWNLOAD_FOLDER = "downloads"
 def index():
     return render_template("index.html")
 
-@app.route("/build", methods=["GET", "POST"])
-def build():
+@app.route("/build/<string:language_selected>", methods=["GET", "POST"])
+def build(language_selected):
     
-    language_selected = "japanese"
-
     #session["language"] = language_selected
     data = ["sentence", "translation", "transcription", "word"]
 
-    return render_template("build.html", data=data)
+    return render_template("build.html", language=language_selected, data=data)
 
 # Process input data using selected options
 @app.route("/fetch", methods=["POST", "GET"])
