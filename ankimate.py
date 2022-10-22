@@ -37,7 +37,6 @@ db.init_app(app)
 
 mail = Mail(app)
 
-SESSION_TYPE = "redis"
 app.secret_key = SECRET_KEY
 Session(app)
 

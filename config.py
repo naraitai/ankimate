@@ -26,5 +26,5 @@ SECRET_KEY = environ.get("SECRET_KEY")
 SESSION_TYPE = "redis"
 SESSION_PERMANENT = False
 #app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
-SESSION_USE_SIGNER = True
+#SESSION_USE_SIGNER = True
 SESSION_REDIS = redis.from_url(environ.get("REDIS_URL"))
