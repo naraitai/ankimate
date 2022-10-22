@@ -37,6 +37,7 @@ db.init_app(app)
 
 mail = Mail(app)
 
+SESSION_TYPE = "redis"
 app.secret_key = SECRET_KEY
 Session(app)
 
@@ -50,7 +51,7 @@ def index():
 @app.route("/build/<string:language_selected>", methods=["GET", "POST"])
 def build(language_selected):
     
-    #session["language"] = language_selected
+    session["language"] = language_selected
     data = ["sentence", "translation", "transcription", "word"]
 
     return render_template("build.html", language=language_selected, data=data)
