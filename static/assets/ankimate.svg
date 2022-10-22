@@ -6,5 +6,5 @@
             <stop offset="100%" stop-color="#0084DD"/>
         </linearGradient>
     </defs>
-    <rect x="0" y="0" width="16" height="16" rx="5" ry="5" fill="#1A1D27"/>
+    <text x="5" y="80" font-size="100" font-family="Arial" font-variant="small-caps" font-weight="800" fill="#DFF0FB" stroke="white" stroke-width="0px">Anki Flash</text>
 </svg>

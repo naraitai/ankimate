@@ -1,0 +1,93 @@
+
+.nav-wheel {
+    position: relative;
+    width: 40vh;
+    height: 40vh;
+    overflow:hidden;
+    padding: 0;
+    border-radius: 50%;
+    list-style: none;
+    box-shadow: 0 0 5px 5px lightgrey;
+    transition: .5s ease;
+}
+
+@media only screen and (min-width: 481px) {
+    .nav-wheel {
+        width: 70vh;
+        height: 70vh;
+    }
+}
+
+.nav-wheel:hover {
+    transform: scale(1.05);
+}
+
+#center-button {
+    position: absolute;
+    top: 33%;
+    right: 33%;
+    transform-origin: 0% 100%;
+    z-index: 2;
+    border-radius: 50%;
+    width: 35%;
+    height: 35%;
+    transition: .5s ease;
+
+    background-color: lightgray;
+}
+
+#center-button:hover {
+    top: 34%;
+    right: 34%;
+    transform: scale(1.1);
+}
+
+.center-button-img {
+    height: 100%;
+}
+
+.segment {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform-origin: 0% 100%;
+    overflow: hidden;
+    width: 50%;
+    height: 50%;
+    //display: none;
+    transition: .5s ease;
+    filter: brightness(75%);
+}
+
+.segment:nth-child(1) {
+    height: 100%;
+    background-color: lightblue;
+}
+
+.segment:nth-child(1) .segment-img {
+    height: 100%;
+}
+
+.segment:nth-child(2) {
+    transform: rotate(180deg);
+    background-color: lightseagreen;
+}
+
+.segment:nth-child(2) .segment-img {
+    transform: rotate(-180deg);
+    height: 100%;
+}
+
+.segment:nth-child(3) {
+    transform: rotate(-90deg)
+}
+
+.segment:nth-child(3) .segment-img {
+    height: 175%;
+}
+
+.segment:hover {
+    filter: brightness(100%);
+    box-shadow: 0 0 5px 5px $lt-blue;
+    z-index: 1;
+}

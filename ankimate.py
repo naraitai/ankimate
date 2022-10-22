@@ -1,284 +1,252 @@
-import os, csv, sqlite3, json, redis
-from datetime import datetime, timedelta
+import csv
+import json
+import os 
 from apscheduler.schedulers.background import BackgroundScheduler
-from flask import Flask, render_template, request, redirect, send_file, session, flash, abort
+from datetime import datetime
+from config import SECRET_KEY
+from flask import Flask, send_from_directory
+from flask import flash
+from flask import redirect
+from flask import render_template 
+from flask import request 
+from flask import send_file
+from flask import session
+from flask_mail import Mail
+from flask_mail import Message
 from flask_session import Session
-from flask_mail import Mail, Message
-from smtplib import SMTPException
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import inspect
 from tempfile import TemporaryDirectory
 from werkzeug.utils import secure_filename
-from werkzeug.exceptions import HTTPException, InternalServerError, default_exceptions
-
-#Defines file extensions that can be uploaded
-ALLOWED_EXTENSIONS = {"txt", "csv", "tsv"}
-#Folder to store the file for download
-DOWNLOAD_FOLDER = "downloads"
+from werkzeug.exceptions import HTTPException
+from werkzeug.exceptions import InternalServerError
+from werkzeug.exceptions import default_exceptions
+from functions import allowed_extensions
+from database import db
+from database import dictionaryCN, dictionaryJP
+from database import levelCN, levelJP
+from database import sentencesCN, sentencesEN, sentencesJP 
+from database import transCN_EN, transJP_EN
+from io import BytesIO
 
 app = Flask(__name__)
 
-#File upload size configuration
-app.config["MAX_CONTENT_LENGTH"] = 16 * 1000 * 1000
+app.config.from_pyfile('config.py')
 
-#Mail configuration
-app.config["MAIL_SERVER"] = "smtp.gmail.com"
-app.config["MAIL_PORT"] = 465
-app.config["MAIL_USE_TLS"] = False
-app.config["MAIL_USE_SSL"] = True
-app.config["MAIL_USERNAME"] = os.environ.get("MAIL_USERNAME")
-app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASSWORD")
-app.config["MAIL_DEFAULT_SENDER"] = os.environ.get("MAIL_DEFAULT_SENDER")
-#Mail testing configuration
-app.config["TESTING"] = False
-app.config["MAIL_SURPRESS_SEND"] = False
+db.init_app(app)
 
 mail = Mail(app)
 
-#Session configuration (redis)
-app.secret_key = "k2CTM-kJnW5JUI16gtMh_Q"
-app.config["SESSION_TYPE"] = "redis"
-app.config["SESSION_PERMANENT"] = False
-#app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
-app.config["SESSION_USE_SIGNER"] = True
-app.config["SESSION_REDIS"] = redis.from_url(os.environ.get("REDIS_URL"))
+app.secret_key = SECRET_KEY
 Session(app)
 
-#App functions - Check upload file extension (ATTRIBUTION)
-def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+# Folder to store the file for download
+DOWNLOAD_FOLDER = "downloads"
 
-#Index simply renders page template
 @app.route("/")
 def index():
-    return render_template("index.html") 
+    return render_template("index.html")
 
-@app.route("/build_jp", methods=["GET"])
-def build_jp():
-    session["lang"] = "jp"
+@app.route("/build/<string:language_selected>", methods=["GET", "POST"])
+def build(language_selected):
 
-    return redirect("/build")
-
-@app.route("/build_cn", methods=["GET"])
-def build_cn():
-    session["lang"] = "cn"
-    return redirect("/build")
-
-#Build simply renders page template
-@app.route("/build", methods=["GET", "POST"])
-def build():
-
-    #HTML data-form options (input language / translation & output options)
-    languages = ["JP", "CMN"]
-    translation = ["none", "english"]
-
+    session["language"] = language_selected
     data = ["sentence", "translation", "transcription", "word"]
-    
-    if session["lang"] == "jp":
-        lang = "日本語"
-    elif session["lang"] == "cn":
-        lang = "中文"
 
-    return render_template("build.html", lang=lang, languages=languages, translation=translation, data=data)
+    return render_template("build.html", language=language_selected, data=data)
 
-#Process input data using selected options
-@app.route("/fetch", methods=["POST"])
+# Process input data using selected options
+@app.route("/fetch", methods=["POST", "GET"])
 def fetch():
 
-    #Store user selected settings in session
-    settings = request.form
-    session["settings"] = settings
+    # Store user selected settings in session
+    session["settings"] = request.form
 
-    #Set maxmium number of matched sentences to return (Future: Allow users to set this value)
-    match_no = 5
-    
-    #Stores all matched sentences
-    sentences = {}
-    #Stores currently selected sentences (intially first sentence of query)
-    selected = {}
-    
-    #Return user to page if no file uploaded
+    # Check file
     if "file" not in request.files:
-        return redirect(request.url)
-    #Check uploaded file
+        return ("error", "No file")
+    
     file = request.files["file"]
     if file.filename == "":
-        return redirect(request.url)
-    if file and allowed_file(file.filename):
+        return ("error", "No file")
+
+    if file and allowed_extensions(file.filename):
         filename = secure_filename(file.filename)
+    else:
+        return ("error", "File type not allowed")
+
+    # Stores all matched sentences
+    all_query_results = {}
+    # Stores currently selected sentences (intially first sentence of query)
+    selected_query_results = {}
         
-        #Open user uploaded file and read to memory (Future: support wider range of data formats in file)
-        with TemporaryDirectory() as tmpdir:
-            file.save(os.path.join(tmpdir, filename))
-            with open(os.path.join(tmpdir, filename), "r", encoding="utf-8") as input:
-                reader=csv.DictReader(input, delimiter="\n", fieldnames=("w"))  
+    # Open user uploaded file and read to memory (Future: support wider range of data formats in file)
+    with TemporaryDirectory() as tmpdir:
+        file.save(os.path.join(tmpdir, filename))
+        
+        with open(os.path.join(tmpdir, filename), "r", encoding="utf-8") as input:
+            reader=csv.DictReader(input, delimiter="\n", fieldnames=("word",))  
 
-                #Open database
-                con = sqlite3.connect("language.db")
-                con.row_factory = sqlite3.Row
-                db = con.cursor()
-                
-                #Get language option selected to complete query
-                lang = session["lang"].upper()
-                
-                #Iterate accross user vocabulary
-                for row in reader:
-                    word = row["w"].strip()
-
-                    #Search for sentences without translations
-                    if settings["trans"] == "none":
-                        db.execute(f"SELECT sentence, transcription FROM sentences{lang} \
-                            WHERE tokens LIKE ? AND grade <= (SELECT grade FROM level{lang} WHERE dict_id = (SELECT id FROM dictionary{lang} \
-                            WHERE word = ? OR transcription = ?)) \
-                            ORDER BY grade DESC, frequency LIMIT 5;", ("%[" + word + "]%", word, word))
-                        results = db.fetchall()
-                    #Search for sentences with translations and matched to grade
-                    elif settings["trans"] == "en":
-                        db.execute(f"SELECT sentences{lang}.sentence, sentences{lang}.transcription, sentencesEN.sentence AS translation \
-                                FROM trans{lang}_EN JOIN sentences{lang} ON trans{lang}_EN.{session['lang']}_id = sentences{lang}.id \
-                                JOIN sentencesEN ON trans{lang}_EN.en_id = sentencesEN.id \
-                                WHERE sentences{lang}.tokens LIKE ? AND sentences{lang}.grade <= (SELECT grade FROM level{lang} \
-                                WHERE dict_id = (SELECT id FROM dictionary{lang} WHERE word = ? OR transcription = ?)) \
-                                ORDER BY grade DESC, frequency LIMIT 5;", ("%[" + word + "]%", word, word))
-                        results = db.fetchall()
-                        #Search for sententences with translations without matching to grade (wider search)
-                        if not results:
-                            db.execute(f"SELECT sentences{lang}.sentence, sentences{lang}.transcription, sentencesEN.sentence AS translation \
-                                FROM trans{lang}_EN JOIN sentences{lang} ON trans{lang}_EN.{session['lang']}_id = sentences{lang}.id \
-                                JOIN sentencesEN ON trans{lang}_EN.en_id = sentencesEN.id \
-                                WHERE sentences{lang}.tokens LIKE ? \
-                                ORDER BY grade, frequency LIMIT 5;", ("%[" + word + "]%",))
-                            results = db.fetchall()
-                    #Search for any sentences containing word (widest search)
-                    if not results:
-                        db.execute(f"SELECT sentence, transcription FROM sentences{lang} \
-                            WHERE tokens LIKE ? ORDER BY frequency LIMIT 5;", ("%[" + word + "]%",))
-                        results = db.fetchall()
-
-                    #Store list for each word. Included the index of the currently selected sentence (first query return)
-                    sentences[word] = []
-                    sentences[word].append(1)
-                    #Iterate over returned sentences and store as a list of dictionaries
-                    for result in results:
-                        sentences[word].append(dict(result))
-
-                #Iterate over returned sentences and store first returned sentence (if available)
-                for key in sentences:
-                    #Check if any sentences found
-                    if len(sentences[key]) > 1:
-                        #Check if user selected to show translations
-                        if settings["trans"] == "en":
-                            length = len(sentences[key][1])
-                            #If sentence with translation not found.
-                            if length < 3:
-                                selected[key] = sentences[key][1]
-                                selected[key]["translation"] = "No translation found."
-                            else:
-                                selected[key] = sentences[key][1]
-                        #If user did not select to show translations
-                        else:
-                            selected[key] = sentences[key][1]
-                    #No sentences found
-                    else:
-                        #User selected sentences with translations
-                        if settings["trans"] == "en":
-                            selected[key] = {"sentence":"No sentences found.", "transcription":"No sentences found.", "translation":"No translation found."}
-                        else:
-                            selected[key] = {"sentence":"No sentences found.", "transcription":"No sentences found."}
+            # Select query tables
+            if session["language"] == "japanese":
+                dictionary_tbl = dictionaryJP
+                level_tbl = levelJP
+                sentence_tbl = sentencesJP
+                translation_tbl = transJP_EN
             
-                #Save data in session
-                session["sentences"] = sentences
-                session["selected"] = selected
+            elif session["language"] == "mandarin":
+                dictionary_tbl = dictionaryCN
+                level_tbl = levelCN
+                sentence_tbl = sentencesCN
+                translation_tbl = transCN_EN
+            
+            # Iterate accross user vocabulary
+            for row in reader:
+                word = row["word"].strip()
+
+                #dictionary_entry = db.session.query(dictionaryJP.id).filter(dictionaryJP.word == query_word).first()
                 
-                #Dump data to JSON for AJAX reply
-                data = json.dumps(selected)
+                #word_level = db.session.query(levelJP.grade).filter(levelJP.dict_id == dictionary_entry).first()[0]
+
+                # Query translation / no translation via user selection. List of SQLAlchemy rows
+                if session["settings"]["trans"] == "none":
+
+                    query_results = sentence_tbl\
+                            .query.with_entities(sentence_tbl.sentence, sentence_tbl.transcription)\
+                            .filter(sentence_tbl.tokens.contains(word), sentence_tbl.grade <= 5)\
+                            .order_by(sentence_tbl.grade.desc(), sentence_tbl.frequency)\
+                            .limit(5)\
+                            .all()
+
+                elif session["settings"]["trans"] == "en":
+
+                    query_results = db.session\
+                            .query(sentence_tbl.sentence, sentence_tbl.transcription, sentencesEN.sentence.label("translation"))\
+                            .join(translation_tbl, sentence_tbl.id==translation_tbl.jp_id)\
+                            .join(sentencesEN, translation_tbl.en_id==sentencesEN.id)\
+                            .filter(sentence_tbl.tokens.contains(word))\
+                            .limit(5)\
+                            .all()
+                
+                # Store results as list of dictionaries
+                query_results =  [r._asdict() for r in query_results]
+
+                # Store all query results
+                if bool(query_results):
+                    # Current selected sentence
+                    all_query_results[word] = [1]
+
+                    for query_result in query_results:
+                        all_query_results[word].append(query_result)
+                else:
+                    # No result
+                    if session["settings"]["trans"] == "none":
+                        all_query_results[word] = [1, {'sentence': 'No sentence found', 'transcription': 'No transcription found'}]
+                    elif session["settings"]["trans"] == "en":
+                        all_query_results[word] = [1, {'sentence': 'No sentence found', 'transcription': 'No transcription found', "translation": "No translation found"}]
+            
+            # Select first return for all words
+            for key in all_query_results:
+                selected_query_results[key] = all_query_results[key][1]               
+            
+            # Store query results in session
+            session["all_query_results"] = all_query_results
+            session["selected_query_results"] = selected_query_results
+            
+            data = json.dumps(selected_query_results)
 
         return data
 
-#User requests alternative sentence
+# User requests alternative sentence
 @app.route("/reload", methods=["POST"])
 def reload ():
 
-    #Get sentences to reload
+    # Get sentences to reload
     words = request.form.getlist("reload")
-    sentences = session["sentences"]
-    selected = session["selected"]
+        
+    sentences = session["all_query_results"]
+    selected = session["selected_query_results"]
 
-    #Store new sentences to be returned
+    # Store new sentences to be returned
     new = {}
-    #Iterate across words with sentence change requested
+    # Iterate across words with sentence change requested
     for word in words:
-        #Current index of selected sentence
+        # Current index of selected sentence
         index = sentences[word][0]
-        #Store total number of sentences found
+        # Store total number of sentences found
         length = len(sentences[word]) - 1
-        #Update sentence if another sentence is available
+        # Update sentence if another sentence is available
         if index < length:
-            #Update selected sentence index
+            # Update selected sentence index
             new_index = index + 1
             sentences[word][0] = new_index
-            #Store new selected sentences and update currently selected sentence
+            # Store new selected sentences and update currently selected sentence
             new[word] = sentences[word][new_index]
             selected[word] = new[word]
         else:
-            #ADD FEEDBACK TO SHOW NO MORE SENTENCES AVAILABLE
+            # ADD FEEDBACK TO SHOW NO MORE SENTENCES AVAILABLE / LOOP ROUND TO BEGINNING
             continue
             
-        #Future: Add new route for user to rollback the sentences
+        # Future: Add new route for user to rollback the sentences
 
-    #Dump to JSON for AJAX response
     new = json.dumps(new)
     return new
 
-#Download selected sentences following user chosen structure
+# Download selected sentences following user chosen structure
 @app.route("/download", methods=["POST"])
 def download():
 
-    #Get user selected data structure and store values as a list
+    # Get user selected data structure and store values as a list
     download_struct = request.form.to_dict().values()
     fields = []
     for item in download_struct:
         fields.append(item)
 
-    #Get sentences from session and data output options
-    single = session["selected"]
+    print(fields)
+
+    # Get sentences from session and data output options
+    selected_query_results = session["selected_query_results"]
+
+    print(selected_query_results)
     
-    #Create file
-    filename = f"downloads/{datetime.now().strftime('%Y%m%d%H%M')}.txt"
-    file = open(filename, "w", encoding="utf-8")
+    # Create file
     
-    #Iterate across selected sentences
-    for entry in single:
-        #Iterate accross all form fields and add data to download file (tab separated)#
-        length = len(download_struct) - 1
-        count = 0
-        while count < length:
+    filename = f"{datetime.now().strftime('%Y%m%d%H%M')}.txt"
+
+    with open(f"downloads/{filename}", "x", encoding="utf-8") as output:
+    
+# Iterate across selected sentences
+        for entry in selected_query_results:
+            # Iterate accross all form fields and add data to download file (tab separated)
+            length = len(download_struct) - 1
+            count = 0
+            while count < length:
+                if fields[count] == "word":
+                    output.write(f"{entry}\t")
+                else:
+                    output.write(f"{selected_query_results[entry][fields[count]]}\t")
+                count += 1
+            # Add final field and escape to new line.
             if fields[count] == "word":
-                file.write(f"{entry}\t")
+                    output.write(f"{entry}\n")
             else:
-                file.write(f"{single[entry][fields[count]]}\t")
-            count += 1
-        #Add final field and escape to new line.
-        if fields[count] == "word":
-                file.write(f"{entry}\n")
-        else:
-            file.write(f"{single[entry][fields[count]]}\n")
+                output.write(f"{selected_query_results[entry][fields[count]]}\n")
+        
+    return send_file(f"downloads\{filename}", as_attachment=True, attachment_filename=filename)
 
-    file.close()
-
-    return send_file(filename, as_attachment=True)
-
-#Renders page template only
+# Renders page template only
 @app.route("/about")
 def about():
     return render_template("about.html")
 
-#Renders page template and sends email
+# Renders page template and sends email
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
 
-    #HTML contact form options
+    # HTML contact form options
     requests = ["Feature", "Data", "Other"]
     
-    #Send email (LONG RUNTIME USE @async)
+    # Send email (LONG RUNTIME USE @async)
     if request.method == "POST":
         text = request.form.get("message")
         subject = request.form.get("subject")
@@ -295,7 +263,7 @@ def contact():
     return redirect("/contact")
 
 
-#Scheduled cleanup of downloads directory
+# Scheduled cleanup of downloads directory
 def cleanup():
     files = os.listdir(DOWNLOAD_FOLDER)
     for f in files:
@@ -306,9 +274,9 @@ schedule.add_job(cleanup, "interval", minutes=15)
 schedule.start()
 
 
-#Check errors
+# Check errors
 def errorhandler(e):
-    #Email re. exceptions in alert
+    # Email re. exceptions in alert
     if not isinstance(e, HTTPException):
         e = InternalServerError()
     alert = [500]
@@ -318,9 +286,24 @@ def errorhandler(e):
         msg = Message(subject, recipients=["contact.ankimate@gmail.com"])
         msg.body = text
         mail.send(msg)
-    #Display error page
+    # Display error page
     return render_template("error.html", error=e.code, message=e.name, description=e.description), e.code
 
-#ATTRIBUTE (CS50)
+class FileError(HTTPException):
+    code = 507
+    description = 'File error'
+
+app.register_error_handler(FileError, 507)
+
+def handle_exception(e):
+    response = e.get_response()
+    response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.desciprtion,
+    })
+    return response
+
+# ATTRIBUTE (CS50)
 for code in default_exceptions:
     app.errorhandler(code)(errorhandler)

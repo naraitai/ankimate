@@ -5,24 +5,34 @@
 {% endblock %}
     
 {% block main %}
-    <h1 hidden>Index</h1>
-    <h2 class="title">I'm studying...</h2>
-    <div class="flex-row">
-        <div class="md">
-            <section class="tile-title">
-                Japanese
-            </section>
-            <a id="jp" class="tile hover" href="/build_jp">
-                日本語
+    <!--<h2 class="title">I'm studying...</h2>-->
+    <div class="flex-row test">
+        <!--<div class="">
+            <a href="{{ url_for('build', language_selected='japanese') }}">
+                <img class="flag md visible" src="{{ url_for('static', filename='assets/japanese_flag.svg') }}" alt="select Japanese"></img>
             </a>
-        </div>
-        <div class="md">
-            <section class="tile-title">
-                Mandarin
-            </section>
-            <a id="cn" class=" tile hover" href="/build_cn">
-                中文
+            
+            <a href="{{ url_for('build', language_selected='mandarin') }}">
+                <img class="flag md visible" src="{{ url_for('static', filename='assets/chinese_flag.svg') }}" alt="select Mandarin"></img>
             </a>
-        </div>
+
+            <a href="{{ url_for('build', language_selected='german') }}">
+                <img class="flag md visible" src="{{ url_for('static', filename='assets/german_flag.svg') }}" alt="select German"></img>
+            </a>
+            <a onClick="selectLang()">next</a>
+        </div>-->
+        
+        <nav id="main-nav" class="nav-wheel">
+            <a href="{{ url_for('build', language_selected='japanese') }}" class="segment">
+                <img class="segment-img" src="{{ url_for('static', filename='assets/flags/japanese_flag.svg') }}">
+            </a>
+            <a href="{{ url_for('build', language_selected='mandarin') }}" class="segment">
+                <img class="segment-img" src="{{ url_for('static', filename='assets/flags/chinese_flag.svg')}}" />
+            </a>
+            <a href="{{ url_for('build', language_selected='german') }}" class="segment">
+                <img class="segment-img" src="{{ url_for('static', filename='assets/flags/german_flag.svg') }}" />
+            </a>
+        </nav>
+
     </div>
 {% endblock %}

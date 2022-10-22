@@ -1,0 +1,67 @@
+
+html {
+    overflow-y: scroll;
+}
+
+/* Structure */
+html, body {
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* Overall site structure */
+.grid-container {
+    display: grid;
+    width: 100%;
+    height: 100vh;
+    grid-template-areas:
+        "header header header header header header header header header header header header"
+        "main main main main main main main main main main main main"
+        "footer footer footer footer footer footer footer footer footer footer footer footer";
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto 1fr auto;
+}
+
+/* Set section to flex column */
+.flex-col {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    justify-content: center;
+    align-items: center;
+    margin: 1em 0em;
+}
+
+/*Set section to flex row */
+.flex-row {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+/* SECTIONS */
+
+/* Header section */
+#header {
+    //position: fixed;
+    grid-area: header;
+    //border-bottom: 3px solid $md-blue;
+    background-color:$nr-black;
+    margin-bottom: 5vh;
+    width: 100%;
+}
+
+/* 'Ankimate' image in header section */
+#logo {
+    max-width: 100%;
+    max-height: 8vh;
+    padding: 0 .5rem;
+}
+
+/* Main section */
+#main {
+    grid-area: main;
+    grid-column: 1 / 13;
+}
+

@@ -1,34 +1,27 @@
 <!DOCTYPE html>
 
-<html lang="en-uk">
+<html lang="en-GB">
     <head>
-        <title>Ankimate</title>
+        <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!--CSS and JS-->
-        <link rel="stylesheet" type="text/css" href="../static/styles.css"/>
-        <script src="../static/scripts.js"></script>
-        <!--Favicon images-->
-        <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}">
-        <link rel="alternate icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <meta name="author" content="naraitai"> <!-- https://github.com/naraitai -->
+        <meta name="description" content="Quickly make Japanese and Mandarin Anki cards.">
         
+        <title>Ankimate</title>
+        
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='sass/styles.css') }}"/>
+        <script src="../static/scripts/scripts.js"></script>
+        <link rel="icon" href="{{ url_for('static', filename='assets/favicon.svg') }}">
+        <link rel="alternate icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
     </head>
     <body class="grid-container">
-        <header id="header">
-            <a href="/"><img id="logo" src="{{ url_for('static', filename='ankimate.svg') }}"></a>
-        </header>
+        {% include '/template-parts/header.html' %}
+        
         <main id="main">
             {% block main %}{% endblock %}
         </main>
-        <footer id="footer">
-            <div id="foot-left">
-                v.3.0
-            </div>
-            <nav id="foot-centre">
-                <a href="/about">About</a>
-                <a href="/contact">Contact</a>
-                <a href="/about">Acknowledgements</a>
-            </nav>
-        </footer>
+        
+        {% include '/template-parts/footer.html' %}
     </body>
 </html>
 

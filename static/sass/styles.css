@@ -68,7 +68,6 @@ a {
   text-decoration: none;
 }
 
-/* Set scroll to always on (Stops bar popping in on About page when expanding collapsible elements) */
 html {
   overflow-y: scroll;
 }
@@ -111,24 +110,174 @@ html, body {
 /* Header section */
 #header {
   grid-area: header;
-  border-bottom: 3px solid #8BC7F0;
   background-color: #1A1D27;
   margin-bottom: 5vh;
+  width: 100%;
 }
 
 /* 'Ankimate' image in header section */
 #logo {
   max-width: 100%;
-  max-height: 25vh;
-  padding: 0.5em 1em;
+  max-height: 8vh;
+  padding: 0 0.5rem;
 }
 
 /* Main section */
 #main {
   grid-area: main;
-  grid-column: 2/12;
+  grid-column: 1/13;
 }
 
+/* Footer */
+#footer {
+  grid-area: footer;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  height: fit-content;
+  margin-top: 1rem;
+  padding: 0.25em;
+  background-color: #1A1D27;
+  color: #DFF0FB;
+}
+
+#foot-left {
+  grid-column: 1/2;
+  place-self: center start;
+}
+
+#foot-nav {
+  grid-column: 2/3;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+}
+
+@media only screen and (min-width: 481px) {
+  #foot-nav {
+    flex-direction: row;
+  }
+}
+.foot-nav-itm {
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  padding: 1rem;
+  text-decoration: none;
+  color: #DFF0FB;
+  margin: 0 0.5rem;
+  text-transform: uppercase;
+}
+
+.highlight {
+  height: 100%;
+  width: 0%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  transition: 0.5s ease;
+}
+
+.foot-nav-itm:hover > .highlight {
+  background-color: #0084DD;
+  width: 100%;
+  text-decoration: underline;
+}
+
+.nav-wheel {
+  position: relative;
+  width: 40vh;
+  height: 40vh;
+  overflow: hidden;
+  padding: 0;
+  border-radius: 50%;
+  list-style: none;
+  box-shadow: 0 0 5px 5px lightgrey;
+  transition: 0.5s ease;
+}
+
+@media only screen and (min-width: 481px) {
+  .nav-wheel {
+    width: 70vh;
+    height: 70vh;
+  }
+}
+.nav-wheel:hover {
+  transform: scale(1.05);
+}
+
+#center-button {
+  position: absolute;
+  top: 33%;
+  right: 33%;
+  transform-origin: 0% 100%;
+  z-index: 2;
+  border-radius: 50%;
+  width: 35%;
+  height: 35%;
+  transition: 0.5s ease;
+  background-color: lightgray;
+}
+
+#center-button:hover {
+  top: 34%;
+  right: 34%;
+  transform: scale(1.1);
+}
+
+.center-button-img {
+  height: 100%;
+}
+
+.segment {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform-origin: 0% 100%;
+  overflow: hidden;
+  width: 50%;
+  height: 50%;
+  transition: 0.5s ease;
+  filter: brightness(75%);
+}
+
+.segment:nth-child(1) {
+  height: 100%;
+  background-color: lightblue;
+}
+
+.segment:nth-child(1) .segment-img {
+  height: 100%;
+}
+
+.segment:nth-child(2) {
+  transform: rotate(180deg);
+  background-color: lightseagreen;
+}
+
+.segment:nth-child(2) .segment-img {
+  transform: rotate(-180deg);
+  height: 100%;
+}
+
+.segment:nth-child(3) {
+  transform: rotate(-90deg);
+}
+
+.segment:nth-child(3) .segment-img {
+  height: 175%;
+}
+
+.segment:hover {
+  filter: brightness(100%);
+  box-shadow: 0 0 5px 5px #DFF0FB;
+  z-index: 1;
+}
+
+/* Set scroll to always on (Stops bar popping in on About page when expanding collapsible elements) */
 /* Contact Page */
 .contact-item {
   width: 70vw;
@@ -160,32 +309,6 @@ html, body {
   padding: 0.5em 0.75em;
   background-color: rgba(255, 99, 71, 0.6);
   text-align: center;
-}
-
-/* Footer */
-#footer {
-  grid-area: footer;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  height: fit-content;
-  margin-top: 1rem;
-  padding: 0.25em;
-  background-color: #1A1D27;
-  color: #DFF0FB;
-}
-
-#foot-left {
-  grid-column: 1/2;
-  place-self: center start;
-}
-
-#foot-centre {
-  grid-column: 2/3;
-  text-align: center;
-}
-
-#foot-centre > a {
-  display: block;
 }
 
 /* ELEMENTS */
@@ -277,14 +400,14 @@ html, body {
 
 /* Set image to display */
 #upload-icon {
-  content: url("upload-blck.svg");
+  content: url("../assets/icons/icon_upload_black.svg");
   width: 50%;
   height: 65%;
 }
 
 /* Set image to on hover */
 label:hover > #upload-icon {
-  content: url("upload-ltblue.svg");
+  content: url("../assets/icons/icon_upload_light_blue.svg");
 }
 
 /* Results table */
@@ -515,6 +638,46 @@ a:hover {
   border: 2px solid #1A1D27;
   border-radius: 5px;
   padding: 1px;
+}
+
+.carousel-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 25vw;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  padding: 0.5%;
+  border: 2px solid blue;
+}
+
+.carousel-container::-webkit-scrollbar {
+  display: none;
+}
+
+.flag {
+  width: 5vw;
+}
+
+.visible {
+  display: block;
+}
+
+.prev, .next {
+  color: black;
+  transition: 0.6s ease;
+}
+
+.settings-bar {
+  grid-row-start: 1;
+  grid-row-end: 5;
+  border: 2px solid black;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  width: 50%;
+  justify-self: left;
+  margin-left: 1rem;
 }
 
 /*# sourceMappingURL=styles.css.map */

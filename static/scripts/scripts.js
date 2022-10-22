@@ -1,5 +1,7 @@
-//Highlight current page in navbar
+// Highlight current page in navbar
 document.addEventListener('DOMContentLoaded', function() {
+    
+    /*
     var navs = document.getElementsByClassName('nav-link');
     var loc = location.href;
     for (var i = 0; i < navs.length; i++) {
@@ -8,91 +10,142 @@ document.addEventListener('DOMContentLoaded', function() {
             navs[i].classList.add('active');
         }
     }
+    */
+
 });
 
-//Set "Build.html" listeners
-if (window.location.pathname == "/build") {
+// Set all event listeners listeners
+// Build page
+if (window.location.pathname.indexOf('build') > -1) {
     document.addEventListener('DOMContentLoaded', function() {
 
-        //Listen for data-input form submission
-        var form = document.getElementById('input');
-        
+        // 'Get sentences' click
+        var form = document.getElementById('input'); // RENAME TO MAKE CLEARER
         form.addEventListener('submit', function(event){
             event.preventDefault();
 
             var formData = new FormData(form);
             
-            //Set "loading" styling
+            // Set "loading" style
             document.getElementById('placeholder-text').innerHTML = 'Fetching sentences';
             document.getElementById('placeholder-text').removeAttribute('hidden');
             document.getElementById('progress').removeAttribute('hidden');
     
-            //AJAX request
+            // Get sentences from server (AJAX)
             dataRequest(formData);
         });
 
-        //Listen for sentence reload form submission and start AJAX request
+        // Sentence reload request
         var reload = document.getElementById('output');
         reload.addEventListener('submit', function(event){
             event.preventDefault();
+
             var reloadData = new FormData(reload);
             reloadRequest(reloadData);
-        }); 
-
+        });
+        
+        // Add file name below icon
         const actualBtn = document.getElementById('actual-btn');
         const fileChosen = document.getElementById('file-text');
 
         actualBtn.addEventListener('change', function(){
             fileChosen.textContent = this.files[0].name
+        }); 
+
+        // Add tile click (MAKE BELOW A FUNCTION AND CALL HERE)
+        var addTile = document.getElementById('add_tile');
+        addTile.addEventListener('click', function(event) {
+            event.preventDefault();
+            
+            // Count tile elements on page
+            var container = document.getElementById('fields');
+            var tileCount = container.children.length;
+            
+            // Prevent infinite tiles being added
+            if (tileCount < 4) {
+                // Get and copy first tile
+                var tile = container.getElementsByTagName('div')[0];
+                var newTile = tile.cloneNode(true);
+
+                // Change new tiles title / inner select's name attribute
+                newTile.getElementsByClassName('tile-title')[0].innerHTML = 'Extra';
+                newTile.getElementsByTagName('select')[0].setAttribute('name', tileCount);
+                
+                // Add new tile to DOM
+                container.appendChild(newTile);
+            }            
         });
 
-        //Listen for plus button click
-        var add = document.getElementById('add');
-        add.addEventListener('click', function(event) {
+        // Remove tile (last first) (MAKE BELOW A FUNCTION AND CALL HERE)
+        var removeTile = document.getElementById('remove_tile');
+        removeTile.addEventListener('click', function(event) {
             event.preventDefault();
-            var container = document.getElementById('fields');
-            var element = container.getElementsByTagName('div')[1]
-            var cln = element.cloneNode(true);
-            cln.getElementsByClassName('tile-title')[0].innerHTML = 'Extra';
-            var name = container.children.length;
-            cln.getElementsByTagName('select')[0].setAttribute('name', name)
-            container.appendChild(cln);
-        });
 
-        //Listen for remove button click
-        var rmv = document.getElementById('remove');
-        rmv.addEventListener('click', function(event) {
-            event.preventDefault();
             var container = document.getElementById('fields');
-            var element = container.lastChild;
+            var lastTile = container.lastChild;
+            
+            // Keep two tiles
             if (container.children.length > 2) {
-                element.remove();
+                lastTile.remove();
             }
         });
     });
 }
 
-//Data-input form AJAX request
+// Add collapsible elements on About page
+if (window.location.pathname == "/about") {
+    document.addEventListener('DOMContentLoaded', function() {
+        //Listen for click on collapsible elements
+        var collapsible = document.getElementsByClassName('collapsible');
+        for (var i = 0; i < collapsible.length; i++) {
+            collapsible[i].addEventListener('click', collapse); 
+        }
+    });
+}
+
+// AJAX REQUESTS
+// 'Get sentences'
 function dataRequest(formData) {
     var request = new XMLHttpRequest();
     request.open('POST', '/fetch', true);
 
     request.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
+            
             const data = JSON.parse(request.responseText);
             document.getElementById('progress').setAttribute('hidden', true);
             document.getElementById('placeholder-text').setAttribute('hidden', true);
             showResults(data);
+            
         }
-    };
+        if (this.status == 410) {
+            console.log("410 error");
+        }
 
+    };
+    
     request.send(formData);
 }
 
-//Display AJAX response data in output table
-function showResults(data) {
-    //Get table
+// Reload sentences
+function reloadRequest(reloadData) {
+    var request = new XMLHttpRequest();
+    request.open('POST', '/reload', true);
+    
+    request.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            const data = JSON.parse(request.responseText);
+            reloadResults(data)
+        }
+    };
 
+    request.send(reloadData);
+}
+
+// FUNCTIONS
+// Create, populate and display sentences table
+function showResults(data) {
+    
     //const resultsHead = document.querySelector('#results-table > thead');
     var form = document.getElementById('output');
     form.style.display = 'flex';
@@ -148,29 +201,14 @@ function showResults(data) {
         holder.classList.add('checkbox');    
         holder.appendChild(check);
         tr.appendChild(holder);
-
+        
         resultsBody.appendChild(tr);
     }
 }
 
-//Output reload checkbox AJAX request
-function reloadRequest(reloadData) {
-    var request = new XMLHttpRequest();
-    request.open('POST', '/reload', true);
-    
-    request.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            const data = JSON.parse(request.responseText);
-            reloadResults(data)
-        }
-    };
-
-    request.send(reloadData);
-}
-
 //Reload output table
 function reloadResults(data) {
-    console.log(data);
+    
     //Iterate across response data
     for (var key in data) {
         //Get table
@@ -191,22 +229,10 @@ function reloadResults(data) {
     }
 }
 
-//Add collapsible elements on About page
-if (window.location.pathname == "/about") {
-    document.addEventListener('DOMContentLoaded', function() {
-        //Listen for click on collapsible elements
-        var collapsible = document.getElementsByClassName('collapsible');
-        for (var i = 0; i < collapsible.length; i++) {
-            collapsible[i].addEventListener('click', collapse); 
-        }
-    });
-}
-
 //Make elements collapsible
 function collapse() {
     var block = this.children[1];
     var header = this.children[0];
-    console.log(header);
     var headerIcon = header.children[1];
     var headerTitle = header.children[0];
 
@@ -219,5 +245,43 @@ function collapse() {
         block.style.maxHeight = block.scrollHeight + 'px';
         header.classList.add('selected');
         headerIcon.innerText = '\u2212';
+    }
+}
+
+//Output reload checkbox AJAX request
+function reloadRequest(reloadData) {
+    var request = new XMLHttpRequest();
+    request.open('POST', '/reload', true);
+    
+    request.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            const data = JSON.parse(request.responseText);
+            reloadResults(data)
+        }
+    };
+
+    request.send(reloadData);
+}
+
+//Reload output table
+function reloadResults(data) {
+    
+    //Iterate across response data
+    for (var key in data) {
+        //Get table
+        const resultsBody = document.querySelector('#results-table > tbody');
+        //Find row to reload
+        for (var i = 0; i < resultsBody.rows.length; i++) {
+            row = resultsBody.rows[i];
+            if (row.cells[0].innerText == key) {
+                //Reload example sentence
+                row.cells[1].innerText = data[key]['sentence'];
+                //Check if translation and change
+                trans = data[key]['translation'];
+                if ( trans != undefined) {
+                    row.cells[2].innerText = trans;
+                }
+            }
+        }
     }
 }

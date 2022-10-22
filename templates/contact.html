@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block main %}
-    <h1 class="title">Contact</h1>
-    <!--Logic to display sucess or failer message (failure not yet implemented)-->
+    <h2 class="title">Contact</h2>
+    <!--Logic to display sucess or failure message (failure not yet implemented)-->
     {% with messages = get_flashed_messages(category_filter=["success"]) %}
     {% if messages %}
         {% for message in messages %}
@@ -29,14 +29,14 @@
     
     <form id="contact-form" class="flex-col" action="/contact" method="post">
         <!--Email subject-->
-        <select class="contact-item" name="subject" required autofocus>
+        <select class="contact-item" name="subject" aria-label="query subject" aria-require="true" required autofocus>
             <option selected disable>Request...</option>
             {% for request in requests %}
             <option>{{ requests[loop.index - 1] }}</option>
             {% endfor %}
         </select>
         <!--Email message-->
-        <textarea class="contact-item" name="message" rows="10" cols="10" placeholder="Enter message..." required></textarea>
+        <textarea class="contact-item" name="message" rows="10" cols="10" placeholder="Enter message..." aria-label="message" aria-required="true" required></textarea>
         <!--Submit to send email-->
         <button class="std-btn">Send</button>
     </form>

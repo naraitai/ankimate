@@ -1,152 +1,10 @@
-//Colour Palette
-//Default text colour, contrasting background 
-$nr-black: #1A1D27;
-//H1, H2 and selected elements
-$dk-blue: #0084DD;
-//Unselected elements
-$md-blue: #8BC7F0;
-//Text on nr-black backgrounds
-$lt-blue: #DFF0FB;
 
-//Font
-$df-font: Arial;
-
-/* Font variables */
-
-/* Mobile */
-:root {
-    --fs-lg: 1.5rem;
-    --fs-med: 1.25rem;
-    --fs-stand: 1rem;
-}
-
-/* Tablet */
-@media only screen and (min-width: 481px) {
-    :root {
-        --fs-lg: 2.25rem;
-        --fs-med: 1.75rem;
-        --fs-stand: 1.25rem;
-    }
-}
-
-/* Medium screens */
-@media only screen and (min-width: 769px) {
-    :root {
-        --fs-lg: 2.5rem;
-        --fs-med: 2rem;
-        --fs-stand: 1rem;
-    }
-}
-
-/* Desktop */
-@media only screen and (min-width: 1025px) {
-    :root {
-        --fs-lg: 2.75rem;
-        --fs-med: 2.25rem;
-        --fs-stand: 1.25rem;
-    }
-}
-
-/* Global styling */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    border: 0;
-    padding: 0;
-    font-family: $df-font;
-}
-
-h1, h2, h3, h4 {
-    font-variant: small-caps;
-    font-weight: bold;
-    color: $lt-blue;
-}
-
-/* Heading specific styling */
-h1 {
-    font-size: var(--fs-lg);
-}
-h2 {
-    font-size: var(--fs-med);
-}
-h3 {
-    color: $lt-blue;
-}
-
-p, span {
-    margin-bottom: 1em;
-    font-size: var(--fs-stand);
-}
-
-a {
-    color: $lt-blue;
-    text-decoration: none;
-}
-
+@import 'abstracts/variables';
+@import 'base/reset';
+@import 'layout/layout';
+@import 'layout/footer';
+@import 'layout/navigation';
 /* Set scroll to always on (Stops bar popping in on About page when expanding collapsible elements) */
-html {
-    overflow-y: scroll;
-}
-
-/* Structure */
-html, body {
-    width: 100%;
-    min-height: 100vh;
-}
-
-/* Overall site structure */
-.grid-container {
-    display: grid;
-    width: 100%;
-    height: 100vh;
-    grid-template-areas:
-        "header header header header header header header header header header header header"
-        "main main main main main main main main main main main main"
-        "footer footer footer footer footer footer footer footer footer footer footer footer";
-    grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: auto 1fr auto;
-}
-
-/* Set section to flex column */
-.flex-col {
-    display: flex;
-    flex-direction: column;
-    height: fit-content;
-    justify-content: center;
-    align-items: center;
-    margin: 1em 0em;
-}
-
-/*Set section to flex row */
-.flex-row {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-}
-
-/* SECTIONS */
-
-/* Header section */
-#header {
-    grid-area: header;
-    border-bottom: 3px solid $md-blue;
-    background-color:$nr-black;
-    margin-bottom: 5vh;
-}
-
-/* 'Ankimate' image in header section */
-#logo {
-    max-width: 100%;
-    max-height: 25vh;
-    padding: 0.5em 1em;
-}
-
-/* Main section */
-#main {
-    grid-area: main;
-    grid-column: 2 / 12;
-}
 
 /* Contact Page */
 .contact-item {
@@ -181,31 +39,7 @@ html, body {
     text-align: center;
 }
 
-/* Footer */
-#footer {
-    grid-area: footer;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    height: fit-content;
-    margin-top: 1rem;
-    padding: 0.25em;
-    background-color: $nr-black;
-    color: $lt-blue;
-}
 
-#foot-left {
-    grid-column: 1 / 2; 
-    place-self: center start;
-}
-
-#foot-centre {
-    grid-column: 2 / 3;
-    text-align: center;
-}
-
-#foot-centre > a {
-    display: block;
-}
 
 /* ELEMENTS */
 
@@ -301,14 +135,14 @@ html, body {
 
 /* Set image to display */
 #upload-icon {
-    content: url("upload-blck.svg");
+    content: url("../assets/icons/icon_upload_black.svg");
     width: 50%;
     height: 65%;
 }
 
 /* Set image to on hover */
 label:hover>#upload-icon {
-    content: url("upload-ltblue.svg");
+    content: url("../assets/icons/icon_upload_light_blue.svg");
 }
 
 /* Results table */
@@ -540,4 +374,46 @@ a:hover {
     border: 2px solid $nr-black;
     border-radius: 5px;
     padding: 1px;
+}
+
+
+.carousel-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 25vw;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    padding: .5%;
+    border: 2px solid blue;
+}
+
+.carousel-container::-webkit-scrollbar {
+    display: none;
+}
+
+.flag {
+    width: 5vw;
+}
+
+.visible {
+    display: block;
+}
+
+.prev, .next {
+    color: black;
+    transition: 0.6s ease;
+}
+
+
+.settings-bar {
+    grid-row-start: 1;
+    grid-row-end: 5;
+    border: 2px solid black;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    width: 50%;
+    justify-self: left;
+    margin-left: 1rem;
 }

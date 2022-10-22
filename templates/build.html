@@ -5,47 +5,59 @@
 {% endblock %}
 
 {% block main %}
+    <section class="settings-bar">
+    {% if language == 'japanese' %}
+        <img class="flag" src="{{ url_for('static', filename='assets/flags/jp_flag_round.svg') }}">
+    {% elif language == 'mandarin' %}
+        <img class="flag" src="{{ url_for('static', filename='assets/flags/cn_flag_round.svg') }}">
+    {% elif language == 'german' %}
+        <img class="flag" src="{{ url_for('static', filename='assets/flags/de_flag_round.svg') }}">
+    {% endif %}
+    </section>
     <div class="flex-col">
-        <h1 class="icon sml">
-            {{ lang }}
-        </h1>
+        <!--DRY!!!!-->
+
+        {% if error %}
+            <p>TEST</p>
+        {% endif %}
+        
         <form id="input" class="flex-col">
-            <div class="flex-row">
+            <section class="flex-row">
                 <div class="md">
-                    <section class="tile-title">
+                    <div class="tile-title">
                         Upload
-                    </section>
-                    <input name="file" type="file" value="file" id="actual-btn" hidden/>
+                    </div>
+                    <input name="file" type="file" value="file" id="actual-btn" hidden>
                     <label class="tile pointer hover" for="actual-btn">
-                        <div id="upload-icon"></div>
+                        <img id="upload-icon" src="{{ url_for('static', filename='assets/icons/icon_upload_black.svg') }}" alt="upload file icon"></img>
                         <p id="file-text" class="hover"></p>
                     </label>            
                 </div>
                 <div class="md">
-                    <section class="tile-title">
+                    <div class="tile-title">
                         Translation
-                    </section>
-                    <section class="tile">
+                    </div>
+                    <div class="tile">
                         <fieldset class="flex-row" name="trans">
                             <input id="off" type="radio" name="trans" value="none" checked hidden>
                             <label for="off" type="radio">
-                                <img src="/static/radioN.svg">
+                                <img src="{{ url_for('static', filename='assets/icons/radio_no_translation.svg') }}" alt="translation off" />
                             </label>
                             <input id="on" type="radio" name="trans" value="en" hidden>
                             <label for="on" type="radio">
-                                <img src="/static/radioY.svg">
+                                <img src="{{ url_for('static', filename='assets/icons/radio_translation.svg') }}" alt="translation on">
                             </label>
                         </fieldset>
-                    </section>
+                    </div>
                 </div>
-            </div>
-            <button class="std-btn">Get sentences</button>
-        </form>
-        <div class="lg">
-            <section class="tile-title">
-                Sentences
             </section>
-            <section class="tile">
+            <button class="std-btn" type="submit">Get sentences</button>
+        </form>
+        <section class="lg">
+            <div class="tile-title">
+                Sentences
+            </div>
+            <div class="tile">
                 <p id="placeholder-text">Your sentences will appear here.</p>
                 <p id="progress" class="fetching" hidden></p>           
                 <form id="output">
@@ -63,16 +75,16 @@
                         </tbody>
                     </table>
                 </form>
-            </section>
-        </div>
+            </div>
+        </section>
         <form id="download" class="flex-col" action="/download" method="post">
             <div id="fields" class="flex-row">
                 <div class="md">
-                    <section class="tile-title">
+                    <div class="tile-title">
                         Front
-                    </section>
-                    <section class="tile">
-                        <select id="front" name="front">
+                    </div>
+                    <div class="tile">
+                        <select id="front" name="front" aria-label="data for card front">
                             {% for d in data %}
                                 {% if d == "sentence" %}
                                     <option value="{{ data[loop.index - 1] }}" selected>{{ data[loop.index - 1].capitalize() }}</option>
@@ -81,13 +93,13 @@
                                 {% endif %}
                             {% endfor %}
                         </select>
-                    </section>
+                    </div>
                 </div>
                 <div class="md">
-                    <section class="tile-title">
+                    <div class="tile-title" aria-label="data for card back">
                         Back
-                    </section>    
-                    <section class="tile">
+                    </div>    
+                    <div class="tile">
                         <select id="back" name="back">
                             {% for d in data %}
                                 {% if d == "transcription" %}
@@ -97,12 +109,12 @@
                                 {% endif %}
                             {% endfor %}
                         </select>
-                    </section>        
+                    </div>        
                 </div>
             </div>
             <div class="flex-row center">
-                <button id="add" class="plus-minus-btn">&#43</button>
-                <button id="remove" class="plus-minus-btn">&#8722</button>
+                <button id="add_tile" class="plus-minus-btn" aria-label="add field">&#43</button>
+                <button id="remove_tile" class="plus-minus-btn" aria-label="remove field">&#8722</button>
             </div>
             <button class="std-btn">Download</button>   
         </form>
