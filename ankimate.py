@@ -52,7 +52,7 @@ def build():
     
     language_selected = "japanese"
 
-    session["language"] = language_selected
+    #session["language"] = language_selected
     data = ["sentence", "translation", "transcription", "word"]
 
     return render_template("build.html", data=data)
