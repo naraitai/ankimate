@@ -49,12 +49,13 @@ def index():
 
 @app.route("/build", methods=["GET", "POST"])
 def build():
-    language_selected = "Japanese"
+    
+    language_selected = "japanese"
 
     session["language"] = language_selected
     data = ["sentence", "translation", "transcription", "word"]
 
-    return render_template("build.html", language=language_selected, data=data)
+    return render_template("build.html", data=data)
 
 # Process input data using selected options
 @app.route("/fetch", methods=["POST", "GET"])
